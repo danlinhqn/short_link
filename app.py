@@ -67,7 +67,7 @@ def index():
             <input type="text" id="url" name="url" required>
             <button type="submit">Generate Short Link</button>
         </form>
-        <p>http://127.0.0.1:5000{{ short_link }}</p>
+        <p>{{ short_link }}</p>
     </body>
     </html>
     '''
