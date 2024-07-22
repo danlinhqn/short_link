@@ -67,7 +67,7 @@ def index():
             <input type="text" id="url" name="url" required>
             <button type="submit">Generate Short Link</button>
         </form>
-        <p>{{ short_link }}</p>
+        <p>http://thaoviet.realdealvn.click {{ short_link }}</p>
     </body>
     </html>
     '''
