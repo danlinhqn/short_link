@@ -41,10 +41,7 @@ def index():
             </script>
         </head>
         <body>
-            <h1>{item['title']}</h1>
-            <p>{item['description']}</p>
-            <img src='{item['image_url']}' alt='{item['title']}'>
-            <p><a href='{item['link_url']}'>Click here to visit the page</a></p>
+         
         </body>
         </html>
         """
