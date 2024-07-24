@@ -1,0 +1,110 @@
+/* static/styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 100; /* Đã sửa lại từ 80 thành 0 để loại bỏ khoảng trắng không mong muốn */
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Đảm bảo chiều cao tối thiểu cho body */
+    background-color: #f5f5f5;
+    overflow: auto; /* Thêm cuộn khi cần */
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+h1 {
+    text-align: left; /* Căn lề trái */
+    color: #333;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 10px;
+    color: #555;
+    text-align: left; /* Căn lề trái */
+}
+
+input[type="text"] {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    align-self: flex-start; /* Căn lề trái */
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.result {
+    background-color: #fff; /* Thêm nền trắng để tạo độ tương phản */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: #333;
+    font-size: 18px;
+    margin-top: 20px;
+    text-align: left; /* Căn lề trái */
+}
+
+.result a {
+    color: #007bff;
+    text-decoration: none;
+    word-wrap: break-word;
+    display: block; /* Đảm bảo liên kết chiếm toàn bộ chiều rộng */
+    margin-bottom: 10px; /* Khoảng cách dưới liên kết */
+}
+
+.result a:hover {
+    text-decoration: underline;
+}
+
+.result img {
+    max-width: 100%;
+    height: auto; /* Giữ tỷ lệ gốc của hình ảnh */
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.result-details {
+    margin-top: 20px;
+    text-align: left; /* Căn lề trái */
+}
+
+.result-title {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.result-description {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
