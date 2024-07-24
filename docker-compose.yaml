@@ -4,7 +4,7 @@ services:
     image: linhtran2023/create-link-url-shop:v02
     container_name: app1
     ports:
-      - "8080:8080"
+      - "8080:5000"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app1.rule=Host(`create-short-link.realdealvn.click`)"
@@ -14,7 +14,7 @@ services:
     image: linhtran2023/redirecr-url-shop:v01
     container_name: app2
     ports:
-      - "8081:8081"
+      - "8081:5000"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app2.rule=Host(`trum-riviu.realdealvn.click`)"
