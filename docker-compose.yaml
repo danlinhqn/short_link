@@ -1,7 +1,7 @@
 version: '3'
 services:
   app1:
-    image: create-link-url-shop:v01
+    image: linhtran2023/create-link-url-shop:v01
     container_name: app1
     ports:
       - "8080:8080"
@@ -32,4 +32,3 @@ services:
       - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-	
