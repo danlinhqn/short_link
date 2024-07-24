@@ -7,8 +7,8 @@ data = {
     '159753': {
         'title': 'Sản phẩm bán chạy nhất',
         'description': 'This is a description of the sample page.',
-        'image_url': 'https://lh3.googleusercontent.com/pw/AP1GczPF_BD-tqkwaqJeq7XnFoMpN9B3Je03K8bvQ3qWSgqa2-4G1TQ1MxztDp4IH7LbmvTuPQEklhK8_JPYkzlf_NDu_bsuj9r5cNNlVu_HPVrp8VNfe_s5xNzNDk5OSm2-bUJS4KLaSjYxfXMcbO4CY2fFUYq5y4BEaffjKFkjB3eIzg0C8xLDNTy2Ci3hD5UTJD4PJibaBIbHuV7mZauuGqLKCCFir5bKkW_XWbscNeAyVs8XzFQXf1FXnChOukDY1BsPgsX8iFRdYpELBdhGAxhOSVEXl3OGAoYmP2v8C1TDtWe6GfKTXJH0NQqIR8mOXwvimZQ7Zoq5MJ4LNRhSr4KfpPEmpiWHnb9PDeDiTtMc-C5QfY5eAgeGvDT8xRAj8vRjgzwVR6TRdws4w0IRyuKKlbyHuXrErrtfivzXVSriEo4Er5x3ATH509iu7xNSp8IN4LJIhZM6gW7vfI_QhZ5VOM8PqOByQym1_zYHDSjMzNVrBHB-yVDTTE_IF4PPNh9aPZUdNoFd13uSCJL59t9nrjWz6MXGnVCd1uJz4iYXeYXSVmUmu8_mDMKX9-GjAODeTElVc6uuZjJ4ytQ3NH-K3rrnyYhOC4pltcujTIxxejTt9IWVRxK6ltmg5x02EEhimJPum44uQ4wJ93Us-7WZQT8KPJidm9iAm7tSCOTsqCXsa-zesdXvWWP26tHXOpD8KSqJ8ptH5NfJ7vumzld14y7sowzff0Uu3NyNXdpxL6ZfvbRtk_pwMuU7cNzugANVyVaFLDOa-18AtQVMa0730K25TDcVYOiQR-qjeVhl4lBd2gMLmQk-nrIo7yVykWwa-C1Shbs9nFT3NCdD-KwBDAfV9NO1OzXHvbw-y1bAzeELe8rGrlzjfCCMrtNIgA_3IxgpIGaiB4bdBeNq1irfkVePAMM1h6hpeLBbQo-0C2E4pSCd7mljXNK48XugRY9KI05i7Cjjw4vvPU6fYii4dFg9c6yuN__7nVeO7EFl8OoL58Kp2xOduHoE0Hih9FMJQK1KretDO2mxsKYVX0CTwctFoOsuTzXNxrixP8WOTSs42NMs5b4QtYwe19cj3WKHtcHfL-M-nA86Aqx8dkSKgAyPp78DFxNmkPyNbP1SuqhAVP6IttW8wCOAO8t-Qs7-=w292-h632-no?authuser=0',
-        'link_url': 'https://www.google.com.vn/'
+        'image_url': 'https://lh3.googleusercontent.com/pw/AP1GczM7-5Pwv_S9meZ-z4j-ptIkYbevCkD7RNdD1hV8X6pZSHMhar9QT2RxF5J3vJj8B3_LDydAmHaumTT3rQaM9CiZA0TRrlClW_DPby8fBMWd6FReXD0SqMChuGdXvnw9YRj-_rK8fBsxMv60OG7keP8=w768-h564-s-no-gm?authuser=0',
+        'link_url': 'https://s.shopee.vn/7Kcp346PkJ'
     }
     # Thêm các mục khác nếu cần
 }
@@ -20,26 +20,31 @@ def index():
         item = data[id]
         html_content = f"""
         <!DOCTYPE html>
-        <html lang="en">
+        <html lang='en'>
         <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
             <title>{item['title']}</title>
-            <meta property="og:title" content="{item['title']}">
-            <meta property="og:description" content="{item['description']}">
-            <meta property="og:image" content="{item['image_url']}">
-            <meta property="og:url" content="{item['link_url']}">
-            <meta property="og:type" content="website">
-            <meta name="twitter:card" content="summary_large_image">
-            <meta name="twitter:title" content="{item['title']}">
-            <meta name="twitter:description" content="{item['description']}">
-            <meta name="twitter:image" content="{item['image_url']}">
+            <meta property='og:title' content='{item['title']}'>
+            <meta property='og:description' content='{item['description']}'>
+            <meta property='og:image' content='{item['image_url']}'>
+            <meta property='og:url' content='{item['link_url']}'>
+            <meta property='og:type' content='website'>
+            <meta name='twitter:card' content='summary_large_image'>
+            <meta name='twitter:title' content='{item['title']}'>
+            <meta name='twitter:description' content='{item['description']}'>
+            <meta name='twitter:image' content='{item['image_url']}'>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {{
+                    window.location.href = "{item['link_url']}";
+                }});
+            </script>
         </head>
         <body>
             <h1>{item['title']}</h1>
             <p>{item['description']}</p>
-            <img src="{item['image_url']}" alt="{item['title']}">
-            <p><a href="{item['link_url']}">Click here to visit the page</a></p>
+            <img src='{item['image_url']}' alt='{item['title']}'>
+            <p><a href='{item['link_url']}'>Click here to visit the page</a></p>
         </body>
         </html>
         """
