@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Mở cổng 8080 cho ứng dụng Flask
-EXPOSE 8080
+EXPOSE 5000
 
 # Thiết lập biến môi trường FLASK_APP để chạy ứng dụng Flask
 ENV FLASK_APP=app.py
