@@ -3,7 +3,7 @@ import hashlib
 from flask import Flask, request, render_template_string, redirect, url_for
 
 # Đường dẫn đến tệp JSON
-json_file_path = 'urls.json'
+json_file_path = 'data.json'
 
 def load_data():
     """Đọc dữ liệu từ tệp JSON."""
