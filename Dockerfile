@@ -15,7 +15,7 @@ COPY . .
 EXPOSE 5000
 
 # Thiết lập biến môi trường FLASK_APP để chạy ứng dụng Flask
-ENV FLASK_APP=app.py
+ENV FLASK_APP=index.py
 
 # Chạy ứng dụng Flask
 CMD ["flask", "run", "--host=0.0.0.0"]
