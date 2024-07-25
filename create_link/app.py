@@ -199,15 +199,16 @@ def redirect_to_url_shop_sell_product(item_id):
         <meta name='twitter:title' content='{item['title']}'>
         <meta name='twitter:description' content='{item['description']}'>
         <meta name='twitter:image' content='{item['image_url']}'>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {{
-                window.location.href = "{item['link_url']}";
-            }});
-        </script>
+  
     </head>
     <body>
         <p>If you are not redirected automatically, follow this <a href="{{ item['link_url'] }}">link</a>.</p>
     </body>
+    <script>
+            document.addEventListener("DOMContentLoaded", function() {{
+                window.location.href = "{item['link_url']}";
+            }});
+    </script>
     </html>
     """
     return render_template_string(html_content)
