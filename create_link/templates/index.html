@@ -6,32 +6,9 @@
     <title>Tạo Link Bán Hàng & Hình Ảnh</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
-    <style>
-        .loading {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-        }
-        .loading img {
-            width: 50px;
-            height: 50px;
-        }
-        .result-image {
-            max-width: 100%;
-            height: auto;
-        }
-        #animation-container {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-    </style>
     <script>
         function showLoading() {
-            document.getElementById('loading').style.display = 'block';
+            document.getElementById('loading').style.display = 'flex';
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -48,14 +25,44 @@
                 path: '{{ url_for("static", filename="animation.json") }}'
             });
         }
+
+        function closePopup() {
+            document.getElementById('result-popup').style.display = 'none';
+            document.getElementById('popup-background').style.display = 'none';
+        }
+
+        function showPopup() {
+            document.getElementById('result-popup').style.display = 'block';
+            document.getElementById('popup-background').style.display = 'block';
+        }
     </script>
+    <script>
+        function copyToClipboard() {
+            // Lấy phần tử input chứa liên kết
+            var linkInput = document.getElementById('link-input');
+    
+            // Chọn nội dung của input
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999); // Đối với di động
+    
+            try {
+                // Sao chép nội dung vào clipboard
+                var successful = document.execCommand('copy');
+                var msg = successful ? 'Sao chép thành công!' : 'Sao chép thất bại!';
+                alert(msg); // Hiển thị thông báo cho người dùng
+            } catch (err) {
+                console.error('Lỗi sao chép vào clipboard: ', err);
+            }
+        }
+    </script>
+    
 </head>
 <body>
     <div id="loading" class="loading">
-        <img src="{{ url_for('static', filename='loading.gif') }}" alt="Loading">
+        <p>Xin vui lòng chờ chút...</p>
     </div>
     <div class="container">
-        <h2>Tạo Link Bán Hàng & Hình Ảnh</h1>
+        <h2>Tạo Link Bán Hàng & Hình Ảnh</h2>
         <form method="post" enctype="multipart/form-data">
             <label for="title">Tiêu đề:</label>
             <input type="text" id="title" name="title" required>
@@ -68,17 +75,31 @@
             <button type="submit">Bấm Tạo Link</button>
         </form>
         {% if short_link %}
-        <div class="result">
-            <p class="result-link-label">Link đã được tạo:</p>
-            <a href="{{ short_link }}" target="_blank" class="result-link">
-                http://thaoviet.realdealvn.click{{ short_link }}
-            </a>
+        <script>
+            document.addEventListener('DOMContentLoaded', showPopup);
+        </script>
+        <div id="popup-background" class="popup-background"></div>
+        
+        <div id="result-popup" class="result-popup" style="display: block;">
+            <div class="result-header">
+                <p class="result-link-label">Link đã được tạo:</p>
+                <div class="link-container">
+                    <input type="text" id="link-input" class="result-link" value="http://thaoviet.realdealvn.click{{ short_link }}" readonly>
+                    <button class="copy-button" onclick="copyToClipboard()">Sao chép</button>
+                </div>
+            </div>
             <div class="result-details">
-                <h2 class="result-title">{{ data[short_link[1:]].title }}</h2>
-                <p class="result-description">{{ data[short_link[1:]].description }}</p>
-                <img src="{{ data[short_link[1:]].image_url }}" alt="{{ data[short_link[1:]].title }}" class="result-image">
+                <h2 class="result-title">A</h2>
+                <p class="result-description">AAA</p>
+                <div class="result-image-container">
+                    <img src="https://lh3.googleusercontent.com/d/1EaDrKO8SMFcnXGED_dJXX6PiUFPHwVQ-" alt="A" class="result-image">
+                </div>
+            </div>
+            <div class="result-footer">
+                <button class="close-button" onclick="closePopup()">Đóng</button>
             </div>
         </div>
+        
         {% elif error_message %}
         <p class="error-message">{{ error_message }}</p>
         {% endif %}

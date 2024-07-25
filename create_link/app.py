@@ -7,6 +7,9 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2 import service_account
 from dotenv import load_dotenv
+import random
+import string
+
 
 # Đường dẫn đến tệp JSON
 json_file_path = 'data.json'
@@ -15,6 +18,11 @@ load_dotenv()
 # Cấu hình upload hình ảnh
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
+
+def generate_random_string(length=3):
+    letters = string.ascii_lowercase
+    random_string = ''.join(random.choice(letters) for i in range(length))
+    return random_string
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -34,9 +42,10 @@ def save_data(data):
 
 def make_short_link(title, description, image_url, link_url):
     """Tạo liên kết rút gọn."""
+  
     # Tạo mã hash cho URL
-    url_hash = hashlib.md5(link_url.encode()).hexdigest()[:6]
-
+    url_hash = hashlib.md5(link_url.encode()).hexdigest()[:3] + generate_random_string()
+    
     # Load dữ liệu hiện tại từ tệp JSON
     data = load_data()
 
@@ -49,7 +58,7 @@ def make_short_link(title, description, image_url, link_url):
         'title': title,
         'description': description,
         'image_url': image_url,
-        'link_url': link_url
+        'link_url': link_url,
     }
     save_data(data)
 
@@ -61,12 +70,16 @@ def make_short_link(title, description, image_url, link_url):
 def upload_image_to_drive(image_path, image_name):
     """Tải hình ảnh lên Google Drive và trả về URL thumbnail."""
     
+     # Đọc nội dung của tệp private_key.pem
+    with open('private_key.pem', 'r') as pem_file:
+        private_key = pem_file.read()
+    
     # Đọc thông tin đăng nhập từ biến môi trường
     service_account_info = {
         "type": os.getenv("TYPE"),
         "project_id": os.getenv("PROJECT_ID"),
         "private_key_id": os.getenv("PRIVATE_KEY_ID"),
-        "private_key": os.getenv("PRIVATE_KEY").replace('\\n', '\n'),
+        "private_key": private_key,
         "client_email": os.getenv("CLIENT_EMAIL"),
         "client_id": os.getenv("CLIENT_ID"),
         "auth_uri": os.getenv("AUTH_URI"),
