@@ -1,21 +1,24 @@
-# Sử dụng image Python chính thức làm base image
+# Use the official Python image from the Docker Hub
 FROM python:3.11-slim
 
-# Thiết lập thư mục làm việc
+# Set the working directory
 WORKDIR /app
 
-# Sao chép tệp requirements.txt và cài đặt các phụ thuộc
-COPY requirements.txt requirements.txt
+# Copy the requirements.txt file into the container
+COPY requirements.txt .
+
+# Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Sao chép mã nguồn ứng dụng vào container
+# Copy the rest of the application code into the container
 COPY . .
 
-# Mở cổng 8080 cho ứng dụng Flask
+# Expose port 5000 to allow traffic on this port
 EXPOSE 5000
 
-# Thiết lập biến môi trường FLASK_APP để chạy ứng dụng Flask
+# Set environment variables
 ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
 
-# Chạy ứng dụng Flask
-CMD ["flask", "run", "--host=0.0.0.0"]
+# Run the Flask application
+CMD ["flask", "run"]

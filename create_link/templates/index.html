@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tạo Link Bán Hàng & Hình Ảnh</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    {% comment %} <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> {% endcomment %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
     <script>
         function showLoading() {
