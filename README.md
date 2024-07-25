@@ -2,7 +2,7 @@ docker network create my-network
 
 docker run -d --name nginx --network my-network -p 80:80 nginx
 
-docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v09
+docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v14
 
 docker run -d --name trum-riviu-shop --network my-network linhtran2023/trum-riviu-shop:v02
 
@@ -59,3 +59,13 @@ server {
     }
 }
 ```
+
+-----
+
+mkdir -p /data_short_link
+
+docker run -d \
+  --name short-link-create-link \
+  --network my-network \
+  -v root/data_short_link/data.json:/data.json \
+  linhtran2023/short-link-create-link:v1

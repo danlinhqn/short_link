@@ -170,11 +170,12 @@ def index():
 #     else:
 #         return "URL not found", 404
 
-@app.route('/<item_id>')
+app.route('/<item_id>')
 def redirect_to_url_shop_sell_product(item_id):
-    
+    # Mở và đọc tệp JSON
     with open('data.json', 'r', encoding='utf-8') as f:
         data_json = json.load(f)
+    
     # Lấy thông tin theo ID từ URL
     item = data_json.get(item_id)
     
@@ -199,16 +200,14 @@ def redirect_to_url_shop_sell_product(item_id):
         <meta name='twitter:title' content='{item['title']}'>
         <meta name='twitter:description' content='{item['description']}'>
         <meta name='twitter:image' content='{item['image_url']}'>
-  
     </head>
     <body>
-        <p>If you are not redirected automatically, follow this <a href="{{ item['link_url'] }}">link</a>.</p>
-    </body>
-    <script>
-            document.addEventListener("DOMContentLoaded", function() {{
+        <script>
+            setTimeout(function() {{
                 window.location.href = "{item['link_url']}";
-            }});
-    </script>
+            }}, 3000); // Chuyển hướng sau 3 giây
+        </script>
+    </body>
     </html>
     """
     return render_template_string(html_content)
