@@ -6,9 +6,11 @@ from werkzeug.utils import secure_filename
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2 import service_account
+from dotenv import load_dotenv
 
 # Đường dẫn đến tệp JSON
 json_file_path = 'data.json'
+load_dotenv()
 
 # Cấu hình upload hình ảnh
 UPLOAD_FOLDER = 'uploads'
@@ -55,14 +57,28 @@ def make_short_link(title, description, image_url, link_url):
     short_link = f"/{url_hash}"
     return short_link
 
+
 def upload_image_to_drive(image_path, image_name):
     """Tải hình ảnh lên Google Drive và trả về URL thumbnail."""
-    # Cấu hình đường dẫn đến file JSON chứa thông tin đăng nhập
-    SERVICE_ACCOUNT_FILE = 'google-drive/seventh-site-414308-b8ea72aa4e20.json'
+    
+    # Đọc thông tin đăng nhập từ biến môi trường
+    service_account_info = {
+        "type": os.getenv("TYPE"),
+        "project_id": os.getenv("PROJECT_ID"),
+        "private_key_id": os.getenv("PRIVATE_KEY_ID"),
+        "private_key": os.getenv("PRIVATE_KEY").replace('\\n', '\n'),
+        "client_email": os.getenv("CLIENT_EMAIL"),
+        "client_id": os.getenv("CLIENT_ID"),
+        "auth_uri": os.getenv("AUTH_URI"),
+        "token_uri": os.getenv("TOKEN_URI"),
+        "auth_provider_x509_cert_url": os.getenv("AUTH_PROVIDER_X509_CERT_URL"),
+        "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL"),
+        "universe_domain": os.getenv("UNIVERSE_DOMAIN")
+    }
+
     SCOPES = ['https://www.googleapis.com/auth/drive.file']
 
-    credentials = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    credentials = service_account.Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
     service = build('drive', 'v3', credentials=credentials)
 
     if not os.path.exists(image_path):
