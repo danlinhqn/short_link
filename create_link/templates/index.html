@@ -38,22 +38,16 @@
     </script>
     <script>
         function copyToClipboard() {
-            // Lấy phần tử input chứa liên kết
+            // Lấy phần tử chứa liên kết
             var linkInput = document.getElementById('link-input');
-    
-            // Chọn nội dung của input
-            linkInput.select();
-            linkInput.setSelectionRange(0, 99999); // Đối với di động
-    
-            try {
-                // Sao chép nội dung vào clipboard
-                var successful = document.execCommand('copy');
-                var msg = successful ? 'Sao chép thành công!' : 'Sao chép thất bại!';
-                alert(msg); // Hiển thị thông báo cho người dùng
-            } catch (err) {
-                console.error('Lỗi sao chép vào clipboard: ', err);
-            }
-        }
+        
+            // Sử dụng API Clipboard để sao chép
+            navigator.clipboard.writeText(linkInput.textContent).then(function() {
+                alert('Liên kết đã được sao chép vào clipboard!');
+            }).catch(function(err) {
+                console.error('Lỗi khi sao chép liên kết: ', err);
+            });
+        }        
     </script>
     
 </head>
@@ -84,13 +78,14 @@
             <div class="result-header">
                 <p class="result-link-label">Link đã được tạo:</p>
                 <div class="link-container">
-                    <input type="text" id="link-input" class="result-link" value="http://thaoviet.realdealvn.click{{ short_link }}" readonly>
+
+                    <span id="link-input" class="result-link">https://trum-riviu.realdealvn.click{{ short_link }}</span>
                     <button class="copy-button" onclick="copyToClipboard()">Sao chép</button>
                 </div>
             </div>
             <div class="result-details">
-                <h2 class="result-title">A</h2>
-                <p class="result-description">AAA</p>
+                 <h2 class="result-title">{{ data[short_link[1:]].title }}</h2>
+                <p class="result-description">{{ data[short_link[1:]].description }}</p>
                 <div class="result-image-container">
                     <img src="https://lh3.googleusercontent.com/d/1EaDrKO8SMFcnXGED_dJXX6PiUFPHwVQ-" alt="A" class="result-image">
                 </div>
