@@ -205,7 +205,7 @@ def redirect_to_url_shop_sell_product(item_id):
         <script>
             setTimeout(function() {{
                 window.location.href = "{item['link_url']}";
-            }}, 3000); // Chuyển hướng sau 3 giây
+            }}); // Chuyển hướng sau 3 giây
         </script>
     </body>
     </html>
