@@ -55,6 +55,7 @@ def make_short_link(title, description, image_url, link_url):
 
     # Nếu chưa tồn tại, lưu URL và các thuộc tính khác vào dữ liệu
     data[url_hash] = {
+        'post_link': "https://trum-riviu.realdealvn.click/" + url_hash,
         'title': title,
         'description': description,
         'image_url': image_url,
@@ -194,7 +195,7 @@ def redirect_to_url_shop_sell_product(item_id):
         <meta property='og:title' content='{item['title']}'>
         <meta property='og:description' content='{item['description']}'>
         <meta property='og:image' content='{item['image_url']}'>
-        <meta property='og:url' content='{item['link_url']}'>
+        <meta property='og:url' content='{item['post_link']}'>
         <meta property='og:type' content='website'>
         <meta name='twitter:card' content='summary_large_image'>
         <meta name='twitter:title' content='{item['title']}'>
