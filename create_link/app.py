@@ -157,18 +157,18 @@ def index():
     data = load_data()
     return render_template('index.html', short_link=short_link, data=data, error_message=error_message)
 
-@app.route('/<url_hash>')
-def redirect_to_url(url_hash):
-    """Chuyển hướng đến URL gốc dựa trên mã hash."""
-    # Load dữ liệu từ tệp JSON
-    data = load_data()
+# @app.route('/<url_hash>')
+# def redirect_to_url(url_hash):
+#     """Chuyển hướng đến URL gốc dựa trên mã hash."""
+#     # Load dữ liệu từ tệp JSON
+#     data = load_data()
 
-    # Kiểm tra mã hash trong dữ liệu
-    item = data.get(url_hash)
-    if item:
-        return redirect(item['link_url'])
-    else:
-        return "URL not found", 404
+#     # Kiểm tra mã hash trong dữ liệu
+#     item = data.get(url_hash)
+#     if item:
+#         return redirect(item['link_url'])
+#     else:
+#         return "URL not found", 404
     
 # Đá link nè:
 # Đọc dữ liệu từ file JSON
