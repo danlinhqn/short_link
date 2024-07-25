@@ -119,7 +119,7 @@ def upload_image_to_drive(image_path, image_name):
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/create-link', methods=['GET', 'POST'])
 def index():
     """Hiển thị giao diện người dùng và xử lý yêu cầu."""
     short_link = ""
