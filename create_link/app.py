@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 import random
 import string
 
-
 # Đường dẫn đến tệp JSON
 json_file_path = 'data.json'
 load_dotenv()
@@ -66,11 +65,10 @@ def make_short_link(title, description, image_url, link_url):
     short_link = f"/{url_hash}"
     return short_link
 
-
 def upload_image_to_drive(image_path, image_name):
     """Tải hình ảnh lên Google Drive và trả về URL thumbnail."""
     
-     # Đọc nội dung của tệp private_key.pem
+    # Đọc nội dung của tệp private_key.pem
     with open('private_key.pem', 'r') as pem_file:
         private_key = pem_file.read()
     
@@ -115,6 +113,7 @@ def upload_image_to_drive(image_path, image_name):
     
     # Tạo đường dẫn thumbnail cho hình ảnh
     thumbnail_link = f"https://lh3.googleusercontent.com/d/{file_id}"
+    
     return thumbnail_link
 
 app = Flask(__name__)
@@ -139,6 +138,9 @@ def index():
                 try:
                     # Upload hình ảnh lên Google Drive và lấy link thumbnail
                     image_url = upload_image_to_drive(image_path, filename)
+                    
+                    # Xóa tệp sau khi upload thành công
+                    os.remove(image_path)
 
                     short_link = make_short_link(title, description, image_url, link_url)
      
