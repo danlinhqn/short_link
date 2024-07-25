@@ -170,12 +170,11 @@ def index():
 #     else:
 #         return "URL not found", 404
 
-app.route('/<item_id>')
+@app.route('/<item_id>')
 def redirect_to_url_shop_sell_product(item_id):
-    # Mở và đọc tệp JSON
+    
     with open('data.json', 'r', encoding='utf-8') as f:
         data_json = json.load(f)
-    
     # Lấy thông tin theo ID từ URL
     item = data_json.get(item_id)
     
@@ -200,6 +199,7 @@ def redirect_to_url_shop_sell_product(item_id):
         <meta name='twitter:title' content='{item['title']}'>
         <meta name='twitter:description' content='{item['description']}'>
         <meta name='twitter:image' content='{item['image_url']}'>
+  
     </head>
     <body>
         <script>
