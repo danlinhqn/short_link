@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 import random
 import string
 from flask import Flask, render_template_string
-import json
 
 # Đường dẫn đến tệp JSON
 json_file_path = 'data.json'
@@ -169,13 +168,14 @@ def redirect_to_url(url_hash):
         return redirect(item['link_url'])
     else:
         return "URL not found", 404
+    
 # Đá link nè:
 # Đọc dữ liệu từ file JSON
 with open('data.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 @app.route('/<item_id>')
-def index(item_id):
+def redirect_to_url_shop_sell_product(item_id):
     # Lấy thông tin theo ID từ URL
     item = data.get(item_id)
     
