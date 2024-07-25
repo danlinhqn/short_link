@@ -169,16 +169,14 @@ def index():
 #         return redirect(item['link_url'])
 #     else:
 #         return "URL not found", 404
-    
-# Đá link nè:
-# Đọc dữ liệu từ file JSON
-with open('data.json', 'r', encoding='utf-8') as f:
-    data = json.load(f)
 
 @app.route('/<item_id>')
 def redirect_to_url_shop_sell_product(item_id):
+    
+    with open('data.json', 'r', encoding='utf-8') as f:
+        data_json = json.load(f)
     # Lấy thông tin theo ID từ URL
-    item = data.get(item_id)
+    item = data_json.get(item_id)
     
     # Kiểm tra nếu item tồn tại
     if not item:
