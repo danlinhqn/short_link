@@ -1,15 +1,30 @@
-/* static/styles.css */
-
 body {
     font-family: Arial, sans-serif;
-    margin: 100; /* Đã sửa lại từ 80 thành 0 để loại bỏ khoảng trắng không mong muốn */
+    margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Đảm bảo chiều cao tối thiểu cho body */
+    min-height: 100vh;
     background-color: #f5f5f5;
-    overflow: auto; /* Thêm cuộn khi cần */
+    overflow: auto;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#animation-container {
+    width: 100%;
+    max-width: 600px;
+    margin-right: 20px; /* Khoảng cách giữa animation và container */
 }
 
 .container {
@@ -19,10 +34,12 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 600px;
+    text-align: left;
+    box-sizing: border-box;
+    margin-left: 20px; /* Khoảng cách bên trái để tránh bị sát vào animation */
 }
 
 h1 {
-    text-align: left; /* Căn lề trái */
     color: #333;
     margin-bottom: 20px;
 }
@@ -30,20 +47,21 @@ h1 {
 form {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
 }
 
 label {
     margin-top: 10px;
     color: #555;
-    text-align: left; /* Căn lề trái */
 }
 
-input[type="text"] {
+input[type="text"], input[type="file"] {
     padding: 10px;
     margin-top: 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
     width: 100%;
+    max-width: 500px;
     box-sizing: border-box;
 }
 
@@ -55,7 +73,6 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    align-self: flex-start; /* Căn lề trái */
 }
 
 button:hover {
@@ -63,22 +80,22 @@ button:hover {
 }
 
 .result {
-    background-color: #fff; /* Thêm nền trắng để tạo độ tương phản */
+    background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     color: #333;
     font-size: 18px;
     margin-top: 20px;
-    text-align: left; /* Căn lề trái */
+    text-align: left;
 }
 
 .result a {
     color: #007bff;
     text-decoration: none;
     word-wrap: break-word;
-    display: block; /* Đảm bảo liên kết chiếm toàn bộ chiều rộng */
-    margin-bottom: 10px; /* Khoảng cách dưới liên kết */
+    display: block;
+    margin-bottom: 10px;
 }
 
 .result a:hover {
@@ -87,14 +104,14 @@ button:hover {
 
 .result img {
     max-width: 100%;
-    height: auto; /* Giữ tỷ lệ gốc của hình ảnh */
+    height: auto;
     border-radius: 4px;
     margin-top: 10px;
 }
 
 .result-details {
     margin-top: 20px;
-    text-align: left; /* Căn lề trái */
+    text-align: left;
 }
 
 .result-title {
@@ -107,4 +124,47 @@ button:hover {
     font-size: 16px;
     color: #666;
     margin-bottom: 20px;
+}
+
+.loading-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    width: 80%;
+    max-width: 400px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.loading-popup img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #animation-container {
+        width: 90%;
+        max-width: 100%;
+        margin: 0; /* Loại bỏ khoảng cách bên phải */
+    }
+
+    .container {
+        width: 90%;
+        max-width: 100%;
+        margin-left: 0; /* Loại bỏ khoảng cách bên trái trên màn hình nhỏ */
+        margin-right: 0; /* Loại bỏ khoảng cách bên phải trên màn hình nhỏ */
+    }
 }

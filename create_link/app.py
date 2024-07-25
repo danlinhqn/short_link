@@ -1,9 +1,21 @@
+from flask import Flask, request, render_template, redirect
 import json
 import hashlib
-from flask import Flask, request, render_template_string, redirect
+import os
+from werkzeug.utils import secure_filename
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+from google.oauth2 import service_account
 
 # Đường dẫn đến tệp JSON
 json_file_path = 'data.json'
+
+# Cấu hình upload hình ảnh
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def load_data():
     """Đọc dữ liệu từ tệp JSON."""
@@ -18,11 +30,11 @@ def save_data(data):
     with open(json_file_path, 'w') as file:
         json.dump(data, file, indent=4)
 
-def make_short_link( title, description, image_url, link_url):
+def make_short_link(title, description, image_url, link_url):
     """Tạo liên kết rút gọn."""
     # Tạo mã hash cho URL
     url_hash = hashlib.md5(link_url.encode()).hexdigest()[:6]
-    
+
     # Load dữ liệu hiện tại từ tệp JSON
     data = load_data()
 
@@ -38,71 +50,79 @@ def make_short_link( title, description, image_url, link_url):
         'link_url': link_url
     }
     save_data(data)
-    
+
     # Tạo link rút gọn
     short_link = f"/{url_hash}"
     return short_link
 
+def upload_image_to_drive(image_path, image_name):
+    """Tải hình ảnh lên Google Drive và trả về URL thumbnail."""
+    # Cấu hình đường dẫn đến file JSON chứa thông tin đăng nhập
+    SERVICE_ACCOUNT_FILE = 'google-drive/seventh-site-414308-b8ea72aa4e20.json'
+    SCOPES = ['https://www.googleapis.com/auth/drive.file']
+
+    credentials = service_account.Credentials.from_service_account_file(
+        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    service = build('drive', 'v3', credentials=credentials)
+
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"No such file or directory: '{image_path}'")
+    
+    # Đặt thông tin tệp tin
+    file_metadata = {'name': image_name}
+    media = MediaFileUpload(image_path, mimetype='image/jpeg')
+    
+    # Tải tệp tin lên Google Drive
+    file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+    
+    # Lấy ID của tệp tin vừa tải lên
+    file_id = file.get('id')
+    
+    # Cài đặt chia sẻ công khai cho tệp tin
+    service.permissions().create(
+        fileId=file_id,
+        body={'type': 'anyone', 'role': 'reader'}
+    ).execute()
+    
+    # Tạo đường dẫn thumbnail cho hình ảnh
+    thumbnail_link = f"https://lh3.googleusercontent.com/d/{file_id}"
+    return thumbnail_link
+
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """Hiển thị giao diện người dùng và xử lý yêu cầu."""
     short_link = ""
+    error_message = None
     if request.method == 'POST':
         title = request.form.get('title')
         description = request.form.get('description')
-        image_url = request.form.get('image_url')
         link_url = request.form.get('link_url')
-        if title and description and image_url and link_url:
-            short_link = make_short_link(title, description, image_url, link_url)
+        if title and description and link_url and 'image' in request.files:
+            image = request.files['image']
+            if image and allowed_file(image.filename):
+                filename = secure_filename(image.filename)
+                image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                image.save(image_path)
+
+                try:
+                    # Upload hình ảnh lên Google Drive và lấy link thumbnail
+                    image_url = upload_image_to_drive(image_path, filename)
+
+                    short_link = make_short_link(title, description, image_url, link_url)
+     
+                except Exception as e:
+                    error_message = f"Đã xảy ra lỗi khi tải ảnh lên Google Drive: {e}"
+            else:
+                error_message = "Loại tệp không hợp lệ"
         else:
-            short_link = "Please enter all fields"
-    
-    # HTML template cho giao diện web
-    html = '''
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tạo Link Bán Hàng & Hình Ảnh</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    </head>
-    <body>
-        <div class="container">
-            <h1>Tạo Link Bán Hàng & Hình Ảnh</h1>
-            <form method="post">
-                <label for="title">Tiêu đề:</label>
-                <input type="text" id="title" name="title" required>
-                <label for="description">Mô tả cơ bản:</label>
-                <input type="text" id="description" name="description" required>
-                <label for="image_url">Link Hình Ảnh URL:</label>
-                <input type="text" id="image_url" name="image_url" required>
-                <label for="link_url">Link Sản Phẩm Tiếp Thị Liên Kết:</label>
-                <input type="text" id="link_url" name="link_url" required>
-                <button type="submit">Bấm Tạo Link</button>
-            </form>
-            {% if short_link %}
-            <div class="result">
-                <p class="result-link-label">Link đã được tạo:</p>
-                <a href="{{ short_link }}" target="_blank" class="result-link">
-                    http://thaoviet.realdealvn.click{{ short_link }}
-                </a>
-                <div class="result-details">
-                    <h2 class="result-title">{{ data[short_link[1:]].title }}</h2>
-                    <p class="result-description">{{ data[short_link[1:]].description }}</p>
-                    <img src="{{ data[short_link[1:]].image_url }}" alt="{{ data[short_link[1:]].title }}" class="result-image">
-                </div>
-            </div>
-            {% endif %}
-        </div>
-    </body>
-    </html>
-    '''
+            error_message = "Vui lòng nhập tất cả các trường và chọn hình ảnh"
+
     # Load dữ liệu để hiển thị
     data = load_data()
-    return render_template_string(html, short_link=short_link, data=data)
+    return render_template('index.html', short_link=short_link, data=data, error_message=error_message)
 
 @app.route('/<url_hash>')
 def redirect_to_url(url_hash):
