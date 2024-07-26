@@ -36,14 +36,6 @@ def load_data_from_redis_with_hash(hash_name):
     """Tải dữ liệu từ Redis DB 15 dưới dạng hash."""
     return redis_client.hgetall(hash_name) or {}
 
-# def load_data_from_redis_have_key(hash_name, key):
-#     """Tải dữ liệu từ Redis theo hash_name và key."""
-#     data = redis_client.hget(hash_name, key)
-#     if data:
-#         return json.loads(data)  # Nếu dữ liệu là chuỗi JSON
-#     return {}
-
-
 def load_data_from_redis_have_key(hash_name, key):
     """Tải dữ liệu từ Redis theo hash_name và key và định dạng lại dữ liệu."""
     data = redis_client.hget(hash_name, key)
