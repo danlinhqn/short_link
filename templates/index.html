@@ -52,6 +52,9 @@
     </div>
     <div class="container">
         <h2>Tạo Link Bán Hàng & Hình Ảnh</h2>
+        {% if error_message %}
+        <div class="error-message">{{ error_message }}</div>
+        {% endif %}
         <form method="post" enctype="multipart/form-data">
             <label for="title">Tiêu đề:</label>
             <input type="text" id="title" name="title" required>
@@ -59,7 +62,7 @@
             <input type="text" id="description" name="description" required>
             <label for="image">Chọn hình ảnh:</label>
             <input type="file" id="image" name="image" required>
-            <label for="link_url">Link Sản Phẩm Tiếp Thị Liên Kết:</label>
+            <label for="link_url">Link sản phẩm tiếp thị liên kết:</label>
             <input type="text" id="link_url" name="link_url" required>
             <button type="submit">Bấm Tạo Link</button>
         </form>
@@ -88,9 +91,6 @@
                 <button class="close-button" onclick="closePopup()">Đóng</button>
             </div>
         </div>
-        
-        {% elif error_message %}
-        <p class="error-message">{{ error_message }}</p>
         {% endif %}
     </div>
     <div id="animation-container"></div>

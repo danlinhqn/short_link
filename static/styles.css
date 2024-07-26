@@ -342,3 +342,12 @@ button:hover {
 .new-post-button {
     background-color: #4CAF50;
 }
+
+
+.error-message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0;
+    text-align: left;
+}
