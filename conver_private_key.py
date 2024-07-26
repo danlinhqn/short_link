@@ -17,6 +17,6 @@ def convert_private_key_to_pem(json_file_path, pem_file_path):
         print("No private_key found in the JSON file")
 
 # Sử dụng hàm
-json_file_path = 'A.json'
+json_file_path = 'pro-core-430614-r5-8c450393be49.json'
 pem_file_path = 'private_key.pem'
 convert_private_key_to_pem(json_file_path, pem_file_path)

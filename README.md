@@ -2,18 +2,19 @@ docker network create my-network
 
 docker run -d --name nginx --network my-network -p 80:80 nginx
 
-docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v14
+docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v06
 
 docker run -d --name trum-riviu-shop --network my-network linhtran2023/trum-riviu-shop:v02
 
 ```
 docker build -t linhtran2023/short-link-create-link:v01 .
 ```
-
 nano /etc/nginx/conf.d/default.conf
 
 ## Sửa lỗi khi nginx không đọc được file css
+
 ```yaml
+# Domain realdealvn.click
 server {
     
     listen 80;
@@ -45,12 +46,12 @@ server {
     }
 }
 
-# Thêm 1 domain nữa 
+# Domain review-phim.realdealvn.click
 server {
     listen 80;
-    server_name trum-riviu.realdealvn.click;
+    server_name review-phim.realdealvn.click;
 
-    location /create-link {
+    location / {
         proxy_pass http://short-link-create-link:5000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -58,14 +59,42 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
+
+# Domain review-phim.realdealvn.click
+server {
+    listen 80;
+    server_name tin-hot.realdealvn.click;
+
+    location / {
+        proxy_pass http://short-link-create-link:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+}
 ```
 
 -----
 
-mkdir -p /data_short_link
+sudo nano /root/redis_data/redis.conf
 
-docker run -d \
-  --name short-link-create-link \
-  --network my-network \
-  -v root/data_short_link/data.json:/data.json \
-  linhtran2023/short-link-create-link:v1
+```
+bind 0.0.0.0
+port 6379
+requirepass shortlink123456!
+dir /data
+dbfilename dump.rdb
+appendonly yes
+appendfilename "appendonly.aof"
+
+```
+```
+docker run -d --name redis \
+  -p 8080:6379 \
+  -v /root/redis_data:/data \
+  -v /root/redis_data/redis.conf:/usr/local/etc/redis/redis.conf \
+  redis:latest redis-server /usr/local/etc/redis/redis.conf
+
+```
