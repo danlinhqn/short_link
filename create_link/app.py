@@ -1,6 +1,5 @@
 from flask import Flask, request, render_template, redirect
 import json
-import hashlib
 import os
 from werkzeug.utils import secure_filename
 from googleapiclient.discovery import build
@@ -10,6 +9,8 @@ from dotenv import load_dotenv
 import random
 import string
 from flask import Flask, render_template_string
+import hashlib
+import redis
 
 # Đường dẫn đến tệp JSON
 json_file_path = 'data.json'
@@ -19,10 +20,25 @@ load_dotenv()
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 
+# Kết nối tới Redis
+redis_client = redis.StrictRedis(host='54.252.162.111', port=8080, db=15, password='shortlink123456!', decode_responses=True)
+
+
 def generate_random_string(length=3):
     letters = string.ascii_lowercase
     random_string = ''.join(random.choice(letters) for i in range(length))
     return random_string
+
+def load_data_from_redis(hash_name):
+    """Tải dữ liệu từ Redis DB 15 dưới dạng hash."""
+    data = redis_client.hgetall(hash_name)
+    return data if data else {}
+
+def save_data_to_redis(hash_name, key, value):
+    """Lưu dữ liệu vào Redis DB 15 dưới dạng hash."""
+    redis_client.hset(hash_name, key, value)
+
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -40,28 +56,26 @@ def save_data(data):
     with open(json_file_path, 'w') as file:
         json.dump(data, file, indent=4)
 
+
 def make_short_link(title, description, image_url, link_url):
-    """Tạo liên kết rút gọn."""
-  
+    """Tạo liên kết rút gọn và lưu vào Redis."""
     # Tạo mã hash cho URL
     url_hash = hashlib.md5(link_url.encode()).hexdigest()[:3] + generate_random_string()
-    
-    # Load dữ liệu hiện tại từ tệp JSON
-    data = load_data()
 
     # Kiểm tra xem mã hash đã tồn tại trong dữ liệu chưa
+    data = load_data_from_redis('short_link')
     if url_hash in data:
         return f"/{url_hash}"
 
     # Nếu chưa tồn tại, lưu URL và các thuộc tính khác vào dữ liệu
-    data[url_hash] = {
+    short_link_data = json.dumps({
         'post_link': "https://trum-riviu.realdealvn.click/" + url_hash,
         'title': title,
         'description': description,
         'image_url': image_url,
         'link_url': link_url,
-    }
-    save_data(data)
+    })
+    save_data_to_redis('short_link', url_hash, short_link_data)
 
     # Tạo link rút gọn
     short_link = f"/{url_hash}"
@@ -157,30 +171,17 @@ def index():
     data = load_data()
     return render_template('index.html', short_link=short_link, data=data, error_message=error_message)
 
-# @app.route('/<url_hash>')
-# def redirect_to_url(url_hash):
-#     """Chuyển hướng đến URL gốc dựa trên mã hash."""
-#     # Load dữ liệu từ tệp JSON
-#     data = load_data()
-
-#     # Kiểm tra mã hash trong dữ liệu
-#     item = data.get(url_hash)
-#     if item:
-#         return redirect(item['link_url'])
-#     else:
-#         return "URL not found", 404
-
 @app.route('/<item_id>')
 def redirect_to_url_shop_sell_product(item_id):
+    """Chuyển hướng đến URL dựa trên mã rút gọn."""
+    data = load_data_from_redis('short_link')
+    item_data = data.get(item_id)
     
-    with open('data.json', 'r', encoding='utf-8') as f:
-        data_json = json.load(f)
-    # Lấy thông tin theo ID từ URL
-    item = data_json.get(item_id)
-    
-    # Kiểm tra nếu item tồn tại
-    if not item:
+    if not item_data:
         return "Không tìm thấy thông tin cho ID này", 404
+
+    # Dữ liệu đã được lưu dưới dạng chuỗi JSON, không cần parse lại
+    item = json.loads(item_data)
     
     # Tạo nội dung HTML với dữ liệu từ item
     html_content = f"""
@@ -199,13 +200,12 @@ def redirect_to_url_shop_sell_product(item_id):
         <meta name='twitter:title' content='{item['title']}'>
         <meta name='twitter:description' content='{item['description']}'>
         <meta name='twitter:image' content='{item['image_url']}'>
-  
     </head>
     <body>
         <script>
             setTimeout(function() {{
                 window.location.href = "{item['link_url']}";
-            }}); // Chuyển hướng sau 3 giây
+            }}, 3000); // Chuyển hướng sau 3 giây
         </script>
     </body>
     </html>
