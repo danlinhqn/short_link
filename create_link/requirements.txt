@@ -1,7 +1,0 @@
-Flask==2.0.3
-google-api-python-client==2.23.0
-google-auth==2.6.6
-google-auth-oauthlib==0.5.2
-google-auth-httplib2==0.1.0
-python-dotenv==0.19.2
-werkzeug==2.0.3

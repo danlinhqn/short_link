@@ -35,21 +35,16 @@
             document.getElementById('result-popup').style.display = 'block';
             document.getElementById('popup-background').style.display = 'block';
         }
-    </script>
-    <script>
+
         function copyToClipboard() {
-            // Lấy phần tử chứa liên kết
             var linkInput = document.getElementById('link-input');
-        
-            // Sử dụng API Clipboard để sao chép
             navigator.clipboard.writeText(linkInput.textContent).then(function() {
                 alert('Liên kết đã được sao chép vào clipboard!');
             }).catch(function(err) {
                 console.error('Lỗi khi sao chép liên kết: ', err);
             });
-        }        
+        }
     </script>
-    
 </head>
 <body>
     <div id="loading" class="loading">
@@ -74,20 +69,19 @@
         </script>
         <div id="popup-background" class="popup-background"></div>
         
-        <div id="result-popup" class="result-popup" style="display: block;">
+        <div id="result-popup" class="result-popup">
             <div class="result-header">
                 <p class="result-link-label">Link đã được tạo:</p>
                 <div class="link-container">
-
                     <span id="link-input" class="result-link">https://trum-riviu.realdealvn.click{{ short_link }}</span>
                     <button class="copy-button" onclick="copyToClipboard()">Sao chép</button>
                 </div>
             </div>
             <div class="result-details">
-                 <h2 class="result-title">{{ data[short_link[1:]].title }}</h2>
+                <h2 class="result-title">{{ data[short_link[1:]].title }}</h2>
                 <p class="result-description">{{ data[short_link[1:]].description }}</p>
                 <div class="result-image-container">
-                    <img src="https://lh3.googleusercontent.com/d/1EaDrKO8SMFcnXGED_dJXX6PiUFPHwVQ-" alt="A" class="result-image">
+                    <img src="{{ data[short_link[1:]].image_url }}" alt="{{ data[short_link[1:]].title }}" class="result-image">
                 </div>
             </div>
             <div class="result-footer">

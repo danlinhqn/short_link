@@ -10,6 +10,7 @@ import random
 import string
 import hashlib
 import redis
+import time
 
 # Tải biến môi trường từ tệp .env
 load_dotenv()
@@ -32,9 +33,39 @@ def generate_random_string(length=3):
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for _ in range(length))
 
-def load_data_from_redis(hash_name):
+def load_data_from_redis_with_hash(hash_name):
     """Tải dữ liệu từ Redis DB 15 dưới dạng hash."""
     return redis_client.hgetall(hash_name) or {}
+
+# def load_data_from_redis_have_key(hash_name, key):
+#     """Tải dữ liệu từ Redis theo hash_name và key."""
+#     data = redis_client.hget(hash_name, key)
+#     if data:
+#         return json.loads(data)  # Nếu dữ liệu là chuỗi JSON
+#     return {}
+
+
+def load_data_from_redis_have_key(hash_name, key):
+    """Tải dữ liệu từ Redis theo hash_name và key và định dạng lại dữ liệu."""
+    data = redis_client.hget(hash_name, key)
+    
+    if data:
+        # Chuyển đổi dữ liệu JSON thành từ điển Python
+        data_dict = json.loads(data)
+        
+        # Định dạng lại dữ liệu theo cấu trúc yêu cầu
+        formatted_data = {
+            key: {
+                'post_link': data_dict.get('post_link', ''),
+                'title': data_dict.get('title', ''),
+                'description': data_dict.get('description', ''),
+                'image_url': data_dict.get('image_url', ''),
+                'link_url': data_dict.get('link_url', '')
+            }
+        }
+        return formatted_data
+    
+    return {}
 
 def save_data_to_redis(hash_name, key, value):
     """Lưu dữ liệu vào Redis DB 15 dưới dạng hash."""
@@ -50,7 +81,7 @@ def make_short_link(title, description, image_url, link_url):
     url_hash = hashlib.md5(link_url.encode()).hexdigest()[:3] + generate_random_string()
 
     # Kiểm tra xem mã hash đã tồn tại trong dữ liệu chưa
-    data = load_data_from_redis('short_link')
+    data = load_data_from_redis_with_hash('short_link')
     if url_hash in data:
         return f"/{url_hash}"
 
@@ -62,6 +93,8 @@ def make_short_link(title, description, image_url, link_url):
         'image_url': image_url,
         'link_url': link_url,
     })
+
+    
     save_data_to_redis('short_link', url_hash, short_link_data)
 
     return f"/{url_hash}"
@@ -147,13 +180,14 @@ def index():
             error_message = "Vui lòng nhập tất cả các trường và chọn hình ảnh hợp lệ"
 
     # Load dữ liệu để hiển thị
-    data = load_data_from_redis('short_link')
+    data = load_data_from_redis_have_key('short_link', short_link.replace('/', ''))
+   
     return render_template('index.html', short_link=short_link, data=data, error_message=error_message)
 
 @app.route('/<item_id>')
 def redirect_to_url_shop_sell_product(item_id):
     """Chuyển hướng đến URL dựa trên mã rút gọn."""
-    data = load_data_from_redis('short_link')
+    data = load_data_from_redis_with_hash('short_link')
     item_data = data.get(item_id)
     
     if not item_data:
@@ -184,7 +218,7 @@ def redirect_to_url_shop_sell_product(item_id):
         <script>
             setTimeout(function() {{
                 window.location.href = "{item['link_url']}";
-            }}, 3000); // Chuyển hướng sau 3 giây
+            }}); // Chuyển hướng sau 3 giây
         </script>
     </body>
     </html>
