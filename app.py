@@ -10,7 +10,6 @@ import random
 import string
 import hashlib
 import redis
-import time
 
 # Tải biến môi trường từ tệp .env
 load_dotenv()
