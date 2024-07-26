@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, render_template_string
 import json
 import os
 from werkzeug.utils import secure_filename
@@ -8,12 +8,10 @@ from google.oauth2 import service_account
 from dotenv import load_dotenv
 import random
 import string
-from flask import Flask, render_template_string
 import hashlib
 import redis
 
-# Đường dẫn đến tệp JSON
-json_file_path = 'data.json'
+# Tải biến môi trường từ tệp .env
 load_dotenv()
 
 # Cấu hình upload hình ảnh
@@ -21,41 +19,30 @@ UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 
 # Kết nối tới Redis
-redis_client = redis.StrictRedis(host='54.252.162.111', port=8080, db=15, password='shortlink123456!', decode_responses=True)
-
+redis_client = redis.StrictRedis(
+    host='54.252.162.111', 
+    port=8080, 
+    db=15, 
+    password='shortlink123456!', 
+    decode_responses=True
+)
 
 def generate_random_string(length=3):
+    """Tạo chuỗi ngẫu nhiên với độ dài được chỉ định."""
     letters = string.ascii_lowercase
-    random_string = ''.join(random.choice(letters) for i in range(length))
-    return random_string
+    return ''.join(random.choice(letters) for _ in range(length))
 
 def load_data_from_redis(hash_name):
     """Tải dữ liệu từ Redis DB 15 dưới dạng hash."""
-    data = redis_client.hgetall(hash_name)
-    return data if data else {}
+    return redis_client.hgetall(hash_name) or {}
 
 def save_data_to_redis(hash_name, key, value):
     """Lưu dữ liệu vào Redis DB 15 dưới dạng hash."""
     redis_client.hset(hash_name, key, value)
 
-
-
 def allowed_file(filename):
+    """Kiểm tra xem tệp có phải là loại được phép không."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def load_data():
-    """Đọc dữ liệu từ tệp JSON."""
-    try:
-        with open(json_file_path, 'r') as file:
-            return json.load(file)
-    except FileNotFoundError:
-        return {}
-
-def save_data(data):
-    """Lưu dữ liệu vào tệp JSON."""
-    with open(json_file_path, 'w') as file:
-        json.dump(data, file, indent=4)
-
 
 def make_short_link(title, description, image_url, link_url):
     """Tạo liên kết rút gọn và lưu vào Redis."""
@@ -69,7 +56,7 @@ def make_short_link(title, description, image_url, link_url):
 
     # Nếu chưa tồn tại, lưu URL và các thuộc tính khác vào dữ liệu
     short_link_data = json.dumps({
-        'post_link': "https://trum-riviu.realdealvn.click/" + url_hash,
+        'post_link': f"https://trum-riviu.realdealvn.click/{url_hash}",
         'title': title,
         'description': description,
         'image_url': image_url,
@@ -77,13 +64,10 @@ def make_short_link(title, description, image_url, link_url):
     })
     save_data_to_redis('short_link', url_hash, short_link_data)
 
-    # Tạo link rút gọn
-    short_link = f"/{url_hash}"
-    return short_link
+    return f"/{url_hash}"
 
 def upload_image_to_drive(image_path, image_name):
     """Tải hình ảnh lên Google Drive và trả về URL thumbnail."""
-    
     # Đọc nội dung của tệp private_key.pem
     with open('private_key.pem', 'r') as pem_file:
         private_key = pem_file.read()
@@ -104,7 +88,6 @@ def upload_image_to_drive(image_path, image_name):
     }
 
     SCOPES = ['https://www.googleapis.com/auth/drive.file']
-
     credentials = service_account.Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
     service = build('drive', 'v3', credentials=credentials)
 
@@ -128,9 +111,7 @@ def upload_image_to_drive(image_path, image_name):
     ).execute()
     
     # Tạo đường dẫn thumbnail cho hình ảnh
-    thumbnail_link = f"https://lh3.googleusercontent.com/d/{file_id}"
-    
-    return thumbnail_link
+    return f"https://lh3.googleusercontent.com/d/{file_id}"
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -144,31 +125,29 @@ def index():
         title = request.form.get('title')
         description = request.form.get('description')
         link_url = request.form.get('link_url')
-        if title and description and link_url and 'image' in request.files:
-            image = request.files['image']
-            if image and allowed_file(image.filename):
-                filename = secure_filename(image.filename)
-                image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        image = request.files.get('image')
+
+        if title and description and link_url and image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            try:
                 image.save(image_path)
 
-                try:
-                    # Upload hình ảnh lên Google Drive và lấy link thumbnail
-                    image_url = upload_image_to_drive(image_path, filename)
-                    
-                    # Xóa tệp sau khi upload thành công
-                    os.remove(image_path)
+                # Upload hình ảnh lên Google Drive và lấy link thumbnail
+                image_url = upload_image_to_drive(image_path, filename)
 
-                    short_link = make_short_link(title, description, image_url, link_url)
-     
-                except Exception as e:
-                    error_message = f"Đã xảy ra lỗi khi tải ảnh lên Google Drive: {e}"
-            else:
-                error_message = "Loại tệp không hợp lệ"
+                # Xóa tệp sau khi upload thành công
+                os.remove(image_path)
+
+                short_link = make_short_link(title, description, image_url, link_url)
+
+            except Exception as e:
+                error_message = f"Đã xảy ra lỗi khi tải ảnh lên Google Drive: {e}"
         else:
-            error_message = "Vui lòng nhập tất cả các trường và chọn hình ảnh"
+            error_message = "Vui lòng nhập tất cả các trường và chọn hình ảnh hợp lệ"
 
     # Load dữ liệu để hiển thị
-    data = load_data()
+    data = load_data_from_redis('short_link')
     return render_template('index.html', short_link=short_link, data=data, error_message=error_message)
 
 @app.route('/<item_id>')
