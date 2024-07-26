@@ -258,7 +258,7 @@ button:hover {
     color: #007BFF;
     padding: 10px;
     margin: 0;
-    text-align: center;
+    text-align: left;
     word-wrap: break-word;
     flex-grow: 1;
     border-radius: 8px;
@@ -307,7 +307,6 @@ button:hover {
     justify-content: center; /* Căn giữa hình ảnh theo chiều ngang */
     align-items: center; /* Căn giữa hình ảnh theo chiều dọc */
     margin-top: 10px;
-    max-height: 200px; /* Chiều cao tối đa cho container hình ảnh */
     overflow: hidden; /* Ẩn phần hình ảnh vượt quá container */
 }
 
