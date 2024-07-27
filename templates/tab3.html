@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký shop phụ</title>
+    <style>
+        form {
+            margin: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input {
+            display: block;
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h3>Đăng Ký Shop Phụ</h3>
+    <form method="post" enctype="multipart/form-data">
+        <label for="main_shop_link">Link shop chính của bạn:</label>
+        <input type="text" id="main_shop_link" name="main_shop_link" required>
+        
+        <label for="sub_shop_link">Link shop phụ:</label>
+        <input type="text" id="sub_shop_link" name="sub_shop_link" required disabled>
+        
+        <button type="submit">Đăng ký shop phụ</button>
+    </form>
+
+    <script>
+        const mainShopLink = document.getElementById('main_shop_link');
+        const subShopLink = document.getElementById('sub_shop_link');
+
+        mainShopLink.addEventListener('input', function() {
+            const mainLink = this.value.trim();
+
+            if (mainLink) {
+                subShopLink.disabled = false;
+                if (!subShopLink.value.startsWith(mainLink + '/')) {
+                    subShopLink.value = mainLink + '/';
+                }
+            } else {
+                subShopLink.value = '';
+                subShopLink.disabled = true;
+            }
+        });
+
+        subShopLink.addEventListener('focus', function() {
+            const mainLink = mainShopLink.value.trim();
+            if (mainLink && !this.value.startsWith(mainLink + '/')) {
+                this.value = mainLink + '/';
+            }
+        });
+
+        subShopLink.addEventListener('keydown', function(event) {
+            const mainLink = mainShopLink.value.trim();
+            const startPosition = mainLink.length + 1;
+
+            // Prevent deletion of the main link part
+            if ((event.key === 'Backspace' || event.key === 'Delete') && this.selectionStart <= startPosition) {
+                event.preventDefault();
+            }
+
+            // Prevent cursor moving before the main link part
+            if (this.selectionStart < startPosition) {
+                this.setSelectionRange(startPosition, startPosition);
+            }
+        });
+
+        subShopLink.addEventListener('click', function(event) {
+            const mainLink = mainShopLink.value.trim();
+            const startPosition = mainLink.length + 1;
+
+            // Prevent cursor moving before the main link part on click
+            if (this.selectionStart < startPosition) {
+                this.setSelectionRange(startPosition, startPosition);
+                event.preventDefault();
+            }
+        });
+
+        subShopLink.addEventListener('input', function() {
+            const mainLink = mainShopLink.value.trim();
+            const startPosition = mainLink.length + 1;
+
+            // Ensure the input always starts with the main link part
+            if (!this.value.startsWith(mainLink + '/')) {
+                this.value = mainLink + '/' + this.value.slice(startPosition);
+            }
+
+            // Prevent editing before the main link part
+            if (this.selectionStart < startPosition) {
+                this.setSelectionRange(startPosition, startPosition);
+            }
+        });
+    </script>
+</body>
+</html>

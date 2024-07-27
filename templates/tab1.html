@@ -1,0 +1,48 @@
+<h3>Tạo Link Bán Hàng & Hình Ảnh</h3>
+{% if error_message %}
+<div class="error-message">{{ error_message }}</div>
+{% endif %}
+<form method="post" enctype="multipart/form-data">
+    <label for="title">Tiêu đề:</label>
+    <input type="text" id="title" name="title" required>
+    <label for="description">Mô tả cơ bản:</label>
+    <input type="text" id="description" name="description" required>
+    <label for="image">Chọn hình ảnh:</label>
+    <input type="file" id="image" name="image" required>
+    <label for="link_url">Link sản phẩm tiếp thị liên kết:</label>
+    <input type="text" id="link_url" name="link_url" required>
+    <button type="submit">Bấm tạo link</button>
+</form>
+{% if short_link %}
+<script>
+    document.addEventListener('DOMContentLoaded', showPopup);
+</script>
+<div id="popup-background" class="popup-background"></div>
+<div id="result-popup" class="result-popup">
+    <div class="result-header">
+        <p class="result-link-label">Link đã được tạo:</p>
+        <div class="link-container">
+            <span id="link-input" class="result-link">https://trum-riviu.realdealvn.click{{ short_link }}</span>
+            <button class="copy-button" onclick="copyToClipboard()">Sao chép</button>
+        </div>
+        <div class="link-container">
+            <span id="link-input" class="result-link">https://review-phim.realdealvn.click{{ short_link }}</span>
+            <button class="copy-button" onclick="copyToClipboard()">Sao chép</button>
+        </div>
+        <div class="link-container">
+            <span id="link-input" class="result-link">https://tin-hot.realdealvn.click{{ short_link }}</span>
+            <button class="copy-button" onclick="copyToClipboard()">Sao chép</button>
+        </div>
+    </div>
+    <div class="result-details">
+        <h2 class="result-title">{{ data[short_link[1:]].title }}</h2>
+        <p class="result-description">{{ data[short_link[1:]].description }}</p>
+        <div class="result-image-container">
+            <img src="{{ data[short_link[1:]].image_url }}" alt="{{ data[short_link[1:]].title }}" class="result-image">
+        </div>
+    </div>
+    <div class="result-footer">
+        <button class="close-button" onclick="closePopup()">Đóng</button>
+    </div>
+</div>
+{% endif %}

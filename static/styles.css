@@ -16,16 +16,15 @@ body {
     justify-content: center;
     align-items: flex-start;
     width: 100%;
-    max-width: 1200px;
+    /* max-width: 1200px; */
     padding: 20px;
     box-sizing: border-box;
-    margin-left: 100px;
 }
 
 #animation-container {
     width: 100%;
     max-width: 600px;
-    margin-right: 20px; /* Khoảng cách giữa animation và container */
+    margin-left: 20px; /* Khoảng cách giữa form và animation */
 }
 
 .container {
@@ -34,17 +33,22 @@ body {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
     text-align: left;
     box-sizing: border-box;
-    margin-left: 100px; /* Khoảng cách bên trái để tránh bị sát vào animation */
+    margin-right: 20px; /* Khoảng cách bên phải để tránh bị sát vào animation */
     margin-top: 30px;
     margin-bottom: 30px;
 }
 
-h1 {
+h2 {
     color: #333;
-    margin-bottom: 20px;
+    margin: 20px;
+}
+
+h3 {
+    color: #333;
+    margin: 20px;
 }
 
 form {
@@ -64,10 +68,9 @@ input[type="text"], input[type="file"] {
     border: 1px solid #ddd;
     border-radius: 4px;
     width: 100%;
-    /* max-width: 500px; */
     box-sizing: border-box;
+    font-size: 15px;
 }
-
 
 button {
     margin-top: 20px;
@@ -77,6 +80,7 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -162,26 +166,19 @@ button:hover {
     #animation-container {
         width: 90%;
         max-width: 100%;
-        margin: 0; /* Loại bỏ khoảng cách bên phải */
-        margin-left: 50; /* Loại bỏ khoảng cách bên trái trên màn hình nhỏ */
+        margin: 0;
+        margin-top: 20px;
     }
 
     .container {
         width: 90%;
         max-width: 100%;
-        margin-left: 50; /* Loại bỏ khoảng cách bên trái trên màn hình nhỏ */
-        margin-right: 0; /* Loại bỏ khoảng cách bên phải trên màn hình nhỏ */
+        margin: 0;
     }
 }
 
-
-#animation-container {
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-}
 .loading {
-    display: none; /* Ẩn phần loading ban đầu */
+    display: none;
     justify-content: center;
     align-items: center;
     position: fixed;
@@ -193,24 +190,22 @@ button:hover {
     color: white;
     font-size: 20px;
     font-family: Arial, sans-serif;
-    z-index: 1000; /* Đảm bảo loading hiển thị trên tất cả nội dung khác */
+    z-index: 1000;
 }
 
 .popup-background {
-    display: none; /* Ẩn phần nền popup ban đầu */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000; /* Đảm bảo nền hiển thị dưới popup */
+    z-index: 1000;
 }
 
-/* ---------------- Popup ---------------- */
-
 .result-popup {
-    display: none; /* Ẩn popup ban đầu */
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -219,11 +214,11 @@ button:hover {
     padding: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
-    z-index: 1001; /* Đảm bảo popup hiển thị trên tất cả nội dung khác */
+    z-index: 1001;
     width: 500px;
     max-width: 90%;
-    max-height: 80vh; /* Chiều cao tối đa của popup */
-    overflow-y: auto; /* Hiển thị thanh cuộn khi nội dung dài */
+    max-height: 80vh;
+    overflow-y: auto;
     text-align: center;
 }
 
@@ -233,121 +228,49 @@ button:hover {
     margin-bottom: 20px;
 }
 
-.result-link-label {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    text-align: left;
+.tabs {
+    background: linear-gradient(253deg, #0e74e2 0%, #0056b3 100%);
+    border-radius: 3px;
+    /* padding: 0 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px; */
 }
 
-.link-container {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    overflow: hidden;
-    position: relative;
-}
-
-.result-link {
-    border: none;
-    background-color: transparent;
-    font-size: 16px;
-    color: #007BFF;
-    padding: 10px;
+.tabs ul {
+    list-style-type: none;
     margin: 0;
-    text-align: left;
-    word-wrap: break-word;
-    flex-grow: 1;
-    border-radius: 8px;
-    outline: none; /* Xóa bỏ viền khi nhấp vào */
-}
-
-.copy-button {
-    border: none;
-    border-radius: 0;
-    background-color: #007BFF;
-    color: white;
-    cursor: pointer;
-    /* padding: 10px 15px; */
-    font-size: 16px;
-    transition: background-color 0.3s;
-    /* position: absolute; */
-    right: 0;
-    top: 0;
-    bottom: 0;
-    /* height: 100%; */
-    margin: auto;
-}
-
-.copy-button:hover {
-    background-color: #0056b3;
-}
-
-.result-details {
-    margin-bottom: 20px;
-}
-
-.result-title {
-    font-size: 24px;
-    color: #333;
-    margin: 10px 0;
-}
-
-.result-description {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 10px;
-}
-
-.result-image-container {
+    padding: 0;
     display: flex;
-    justify-content: center; /* Căn giữa hình ảnh theo chiều ngang */
-    align-items: center; /* Căn giữa hình ảnh theo chiều dọc */
-    margin-top: 10px;
-    overflow: hidden; /* Ẩn phần hình ảnh vượt quá container */
+    justify-content: space-between;
 }
 
-.result-image {
-    max-width: 100%; /* Chiều rộng hình ảnh tự động phù hợp với chiều rộng của container */
-    max-height: 100%; /* Chiều cao tối đa của hình ảnh */
-    height: auto; /* Chiều cao tự động theo tỷ lệ */
-    border-radius: 8px;
-    border: 1px solid #ddd;
+.tabs ul li {
+    margin: 0;
 }
 
-.result-footer {
-    display: flex;
-    justify-content: space-between; /* Đặt các nút nằm ở hai bên */
-    margin-top: 20px;
-}
-
-.close-button, .new-post-button {
-    display: inline-block;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    text-align: center;
+.tabs ul li a {
+    text-decoration: none;
     color: white;
-}
-
-.close-button {
-    background-color: #f44336;
-}
-
-.new-post-button {
-    background-color: #4CAF50;
-}
-
-
-.error-message {
-    color: red;
+    padding: 15px 30px;
+    display: block;
+    /* border-radius: 4px; */
+    transition: all 0.3s ease;
     font-weight: bold;
-    text-align: center;
-    margin: 10px 0;
-    text-align: left;
+}
+
+.tabs ul li a:hover,
+.tabs ul li a.active {
+    background-color: rgb(217 221 255 / 30%);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.error-message{
+    margin: 20px;
 }

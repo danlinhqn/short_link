@@ -9,6 +9,8 @@ docker run -d --name trum-riviu-shop --network my-network linhtran2023/trum-rivi
 ```
 docker build -t linhtran2023/short-link-create-link:v01 .
 ```
+
+docker exec -it nginx sh
 nano /etc/nginx/conf.d/default.conf
 
 ## Sửa lỗi khi nginx không đọc được file css

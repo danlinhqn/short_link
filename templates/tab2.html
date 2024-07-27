@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký tên miền</title>
+    <style>
+        form {
+            margin: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        .domain-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .domain-suffix {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 5px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            pointer-events: none;
+        }
+
+        .domain-input {
+            padding-right: 80px; /* Adjust this value based on the length of the suffix */
+        }
+
+        input {
+            display: block;
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h3>Tên Miền Shop Của Bạn</h3>
+    <form method="post" enctype="multipart/form-data">
+        <label for="shop_link">Link shop của bạn:</label>
+        <input type="text" id="shop_link" name="shop_link" required>
+        
+        <label for="domain_name">Tên miền bạn muốn:</label>
+        <div class="domain-container">
+            <input type="text" id="domain_name" name="domain_name" class="domain-input" required>
+        </div>
+
+        <label for="email">Email nhận thông báo kết quả:</label>
+        <input type="text" id="email" name="email" required>
+        
+        <button type="submit">Đăng ký tên miền</button>
+    </form>
+
+    <script>
+        const domainInput = document.getElementById('domain_name');
+        const domainSuffix = '.riviu.online';
+
+        // Set the initial value with the suffix
+        domainInput.value = domainSuffix;
+
+        domainInput.addEventListener('focus', function() {
+            // Move the cursor to the start of the input when focused
+            this.setSelectionRange(0, 0);
+        });
+
+        domainInput.addEventListener('input', function() {
+            let inputValue = this.value;
+
+            // Remove the suffix if it's already present
+            if (inputValue.endsWith(domainSuffix)) {
+                inputValue = inputValue.slice(0, -domainSuffix.length);
+            }
+
+            // Ensure the input only contains valid domain characters
+            inputValue = inputValue.replace(/[^a-zA-Z0-9\-]/g, '');
+
+            // Set the new value with the suffix
+            this.value = inputValue + domainSuffix;
+
+            // Move the cursor to the correct position
+            this.setSelectionRange(inputValue.length, inputValue.length);
+        });
+
+        // Ensure the cursor is always at the right position when clicked
+        domainInput.addEventListener('click', function() {
+            const inputValue = this.value.slice(0, -domainSuffix.length);
+            this.setSelectionRange(inputValue.length, inputValue.length);
+        });
+    </script>
+</body>
+</html>
