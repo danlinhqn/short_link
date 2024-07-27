@@ -11,11 +11,13 @@
         function showLoading() {
             document.getElementById('loading').style.display = 'flex';
         }
-
+    
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('form').addEventListener('submit', showLoading);
+            document.querySelector('form').addEventListener('submit', function(event) {
+                showLoading();
+            });
         });
-
+    
         function loadAnimation() {
             var container = document.getElementById('animation-container');
             var animation = lottie.loadAnimation({
@@ -26,17 +28,17 @@
                 path: '{{ url_for("static", filename="animation.json") }}'
             });
         }
-
+    
         function closePopup() {
             document.getElementById('result-popup').style.display = 'none';
             document.getElementById('popup-background').style.display = 'none';
         }
-
+    
         function showPopup() {
             document.getElementById('result-popup').style.display = 'block';
             document.getElementById('popup-background').style.display = 'block';
         }
-
+    
         function copyToClipboard() {
             var linkInput = document.getElementById('link-input');
             navigator.clipboard.writeText(linkInput.textContent).then(function() {
@@ -45,7 +47,16 @@
                 console.error('Lỗi khi sao chép liên kết: ', err);
             });
         }
+    
+        function showTab(tabId) {
+            var tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(function(tab) {
+                tab.style.display = 'none';
+            });
+            document.getElementById(tabId).style.display = 'block';
+        }
     </script>
+    
 </head>
 <body>
     <div id="loading" class="loading">
@@ -58,7 +69,7 @@
                     <li><a href="javascript:void(0);" class="tab-link" id="tab1-link" onclick="showTab('tab1')">Tạo Link Bán Hàng</a></li>
                     <li><a href="javascript:void(0);" class="tab-link" id="tab2-link" onclick="showTab('tab2')">Đăng ký Tên Miền</a></li>
                     <li><a href="javascript:void(0);" class="tab-link" id="tab3-link" onclick="showTab('tab3')">Đăng ký Shop Phụ</a></li>
-                    <li><a href="javascript:void(0);" class="tab-link" id="tab5-link" onclick="showTab('tab5')">Tra Cứu</a></li>
+                    <li><a href="javascript:void(0);" class="tab-link" id="tab4-link" onclick="showTab('tab4')">Tab 4</a></li>
                 </ul>
             </nav>
             <div id="tab1" class="tab-content">
@@ -70,14 +81,17 @@
             <div id="tab3" class="tab-content">
                 {% include 'tab3.html' %}
             </div>
-            <div id="tab5" class="tab-content">
-                {% include 'tab5.html' %}
+            <div id="tab4" class="tab-content">
+                {% include 'tab4.html' %}
             </div>
         </div>
         <div id="animation-container"></div>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', loadAnimation);
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAnimation();
+            showTab('tab1'); // Default to showing tab1 on load
+        });
     </script>
 </body>
 </html>

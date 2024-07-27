@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra cứu các shop phụ của bạn</title>
+    <style>
+        form {
+            margin: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input {
+            display: block;
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .results {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .copy-btn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        .copy-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading">
+        <p>Xin vui lòng chờ chút...</p>
+    </div>
+    <h3>Tra Cứu Các Shop Phụ Của Bạn</h3>
+    <form id="searchForm">
+        <label for="main_shop_link">Link shop chính của bạn:</label>
+        <input type="text" id="main_shop_link" name="main_shop_link" required>
+        
+        <button type="submit">Tìm kiếm shop phụ</button>
+    </form>
+
+    <div class="results" id="results"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('searchForm');
+            searchForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                document.getElementById('loading').style.display = 'flex';
+
+                const mainShopLink = document.getElementById('main_shop_link').value.trim();
+                if (mainShopLink) {
+                    const searchResults = [];
+                    for (let i = 1; i <= 10; i++) {
+                        searchResults.push(mainShopLink + '/shop' + i);
+                    }
+                    displayResults(searchResults);
+                    document.getElementById('loading').style.display = 'none';
+                } else {
+                    document.getElementById('loading').style.display = 'none';
+                }
+            });
+        });
+
+        function displayResults(results) {
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+
+            results.forEach(result => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+
+                const resultText = document.createElement('span');
+                resultText.textContent = result;
+
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-btn';
+                copyButton.textContent = 'Copy';
+                copyButton.addEventListener('click', () => {
+                    navigator.clipboard.writeText(result).then(() => {
+                        alert('Đã sao chép: ' + result);
+                    });
+                });
+
+                resultItem.appendChild(resultText);
+                resultItem.appendChild(copyButton);
+                resultsContainer.appendChild(resultItem);
+            });
+        }
+    </script>
+</body>
+</html>

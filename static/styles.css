@@ -176,9 +176,8 @@ button:hover {
         margin: 0;
     }
 }
-
 .loading {
-    display: none;
+    display: none; /* Initially hidden */
     justify-content: center;
     align-items: center;
     position: fixed;
@@ -186,12 +185,10 @@ button:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    font-size: 20px;
-    font-family: Arial, sans-serif;
+    background: rgba(255, 255, 255, 0.8);
     z-index: 1000;
 }
+
 
 .popup-background {
     display: none;
