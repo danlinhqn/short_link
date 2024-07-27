@@ -152,7 +152,34 @@ def register_sub_shop():
         error_message = "Vui lòng nhập tất cả các trường"
         return jsonify(success=False, error=error_message)  
 
+#
+@app.route('/get-sub-shop', methods=['POST'])
+def get_sub_shop():
+    
+    try:
+        # Nhận dữ liệu từ yêu cầu POST
+        data = request.form
+        main_shop_link = data.get('main_shop_link', '').strip()
+        
+        if not main_shop_link:
+            return jsonify({'success': False, 'error': 'Link shop chính không được để trống'}), 400
+        
+        # Tìm các khóa trong Redis theo giá trị main_shop_link
+        # Giả sử bạn lưu trữ các khóa dưới dạng hash với các giá trị liên quan đến main_shop_link
+        hash_key = 'shop_hash'  # Thay thế bằng tên hash thực tế của bạn
+        keys = redis_client_14.hkeys(hash_key)
+        
+        # Lọc các khóa chứa main_shop_link
+        matching_keys = [key for key in keys if key.startswith(main_shop_link)]
+        
+        return jsonify({'success': True, 'keys': matching_keys}), 200
+    
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# Main API Run -------------------------- //
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
 
 # Thêm các loading cho các trang giống trang tab3
+# Thêm các điều kiện tự động xóa dấu cách ở các input
