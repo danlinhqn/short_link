@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, render_template_string
+from flask import Flask, jsonify, request, render_template, redirect, render_template_string, url_for
 import json
 import os
 from werkzeug.utils import secure_filename
@@ -7,6 +7,7 @@ from function  import *
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# Xử lý Upload Hình Ảnh -> Tab1
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """Hiển thị giao diện người dùng và xử lý yêu cầu."""
@@ -83,5 +84,58 @@ def redirect_to_url_shop_sell_product(item_id):
     """
     return render_template_string(html_content)
 
+
+@app.route('/register-domain', methods=['POST'])
+def register_domain():
+    """Xử lý đăng ký tên miền."""
+    shop_link = request.form.get('shop_link')
+    domain_name = request.form.get('domain_name')
+    email = request.form.get('email')
+    error_message = None
+
+    if shop_link and domain_name and email:
+        try:
+            # Lưu thông tin vào Redis
+            if not save_data_to_redis_register_domain('domains', domain_name, {
+                'shop_link': shop_link,
+                'domain_name': domain_name,
+                'email': email
+            }):
+                error_message = "Domain này đã tồn tại"
+                return jsonify(success=False, error=error_message)
+            return jsonify(success=True)
+        except Exception as e:
+            error_message = f"Đã xảy ra lỗi khi lưu thông tin: {e}"
+            return jsonify(success=False, error=error_message)
+    else:
+        error_message = "Vui lòng nhập tất cả các trường"
+        return jsonify(success=False, error=error_message)
+    
+# Tạo hash để lưu thông tin
+@app.route('/register-sub-shop', methods=['POST'])
+def register_sub_shop():
+    """Xử lý đăng ký cửa hàng con."""
+    main_shop_link = request.form.get('main_shop_link')
+    sub_shop_link = request.form.get('sub_shop_link')
+    connect_link = request.form.get('connect_link')
+    
+    if main_shop_link and sub_shop_link:
+        try:
+            # Lưu thông tin vào Redis
+            if not save_data_to_redis_register_sub_shop(main_shop_link, sub_shop_link, {
+                'connect_link': connect_link
+            }):
+                error_message = "Domain này đã tồn tại"
+                return jsonify(success=False, error=error_message)
+            return jsonify(success=True)
+        except Exception as e:
+            error_message = f"Đã xảy ra lỗi khi lưu thông tin: {e}"
+            return jsonify(success=False, error=error_message)
+    else:
+        error_message = "Vui lòng nhập tất cả các trường"
+        return jsonify(success=False, error=error_message)  
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
+# Thêm các loading cho các trang giống trang tab3

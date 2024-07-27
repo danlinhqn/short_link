@@ -25,6 +25,7 @@ body {
     width: 100%;
     max-width: 600px;
     margin-left: 20px; /* Khoảng cách giữa form và animation */
+    padding-top: 80px;
 }
 
 .container {
@@ -269,5 +270,8 @@ button:hover {
 }
 
 .error-message{
+    margin: 20px;
+}
+.message{
     margin: 20px;
 }

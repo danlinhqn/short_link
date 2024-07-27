@@ -52,12 +52,19 @@
         button:hover {
             background-color: #45a049;
         }
+
+        #message {
+            margin: 20px;
+            font-weight: bold;
+            white-space: pre-line; /* This will preserve line breaks */
+        }
     </style>
 </head>
 <body>
     <h3>Tên Miền Shop Của Bạn</h3>
-    <form method="post" enctype="multipart/form-data">
-        <label for="shop_link">Link shop của bạn:</label>
+    <p id="message"  ></p>
+    <form id="domain-form" enctype="multipart/form-data">
+        <label for="shop_link">Link liên kết:</label>
         <input type="text" id="shop_link" name="shop_link" required>
         
         <label for="domain_name">Tên miền bạn muốn:</label>
@@ -105,6 +112,43 @@
         domainInput.addEventListener('click', function() {
             const inputValue = this.value.slice(0, -domainSuffix.length);
             this.setSelectionRange(inputValue.length, inputValue.length);
+        });
+
+        // Function to clear form fields
+        function clearForm() {
+            document.getElementById('shop_link').value = '';
+            document.getElementById('domain_name').value = domainSuffix;
+            document.getElementById('email').value = '';
+        }
+
+        // Handle form submission with AJAX
+        document.getElementById('domain-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch('{{ url_for("register_domain") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const message = document.getElementById('message');
+                if (data.success) {
+                    message.style.color = 'green';
+                    message.textContent = 'Đăng ký: thành công!\nKết quả sẽ được gửi qua email của bạn trong 24h.';
+                    clearForm(); // Clear the form fields upon successful registration
+                } else {
+                    message.style.color = 'red';
+                    message.textContent = 'Đăng ký thất bại: ' + data.error;
+                    clearForm(); // Optionally clear the form fields upon failure
+                }
+            })
+            .catch(error => {
+                const message = document.getElementById('message');
+                message.style.color = 'red';
+                message.textContent = 'Có lỗi xảy ra: ' + error.message;
+            });
         });
     </script>
 </body>

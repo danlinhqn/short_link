@@ -33,23 +33,60 @@
         button:hover {
             background-color: #45a049;
         }
+
+        #message_tab3 {
+            margin: 20px;
+            font-weight: bold;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading p {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
     <h3>Đăng Ký Shop Phụ</h3>
-    <form method="post" enctype="multipart/form-data">
+    <p id="message_tab3"></p>
+    <form id="sub-shop-form" method="post" enctype="multipart/form-data">
         <label for="main_shop_link">Link shop chính của bạn:</label>
         <input type="text" id="main_shop_link" name="main_shop_link" required>
         
         <label for="sub_shop_link">Link shop phụ:</label>
         <input type="text" id="sub_shop_link" name="sub_shop_link" required disabled>
+
+        <label for="connect_link">Link liên kết:</label>
+        <input type="text" id="connect_link" name="connect_link" required>
         
         <button type="submit">Đăng ký shop phụ</button>
     </form>
+    <div id="loading" class="loading">
+        <p>Xin vui lòng chờ chút...</p>
+    </div>
 
     <script>
         const mainShopLink = document.getElementById('main_shop_link');
         const subShopLink = document.getElementById('sub_shop_link');
+        const connectLink = document.getElementById('connect_link');
+        const form = document.getElementById('sub-shop-form');
+        const message_tab3 = document.getElementById('message_tab3');
+        const loading = document.getElementById('loading');
 
         mainShopLink.addEventListener('input', function() {
             const mainLink = this.value.trim();
@@ -111,6 +148,34 @@
             if (this.selectionStart < startPosition) {
                 this.setSelectionRange(startPosition, startPosition);
             }
+        });
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(form);
+            loading.style.display = 'flex';
+
+            fetch('/register-sub-shop', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                if (data.success) {
+                    message_tab3.style.color = 'green';
+                    message_tab3.textContent = 'Shop phụ đã được đăng ký thành công!';
+                } else {
+                    message_tab3.style.color = 'red';
+                    message_tab3.textContent = 'Đăng ký thất bại: ' + data.error;
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                message_tab3.style.color = 'red';
+                message_tab3.textContent = 'Có lỗi xảy ra: ' + error.message_tab3;
+            });
         });
     </script>
 </body>

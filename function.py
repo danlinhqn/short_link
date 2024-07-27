@@ -19,10 +19,19 @@ ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 
 
 # Kết nối tới Redis
-redis_client = redis.StrictRedis(
+redis_client_15 = redis.StrictRedis(
     host='54.252.162.111', 
     port=8080, 
     db=15, 
+    password='shortlink123456!', 
+    decode_responses=True
+)
+
+# Kết nối tới Redis
+redis_client_14 = redis.StrictRedis(
+    host='54.252.162.111', 
+    port=8080, 
+    db=14, 
     password='shortlink123456!', 
     decode_responses=True
 )
@@ -34,11 +43,11 @@ def generate_random_string(length=3):
 
 def load_data_from_redis_with_hash(hash_name):
     """Tải dữ liệu từ Redis DB 15 dưới dạng hash."""
-    return redis_client.hgetall(hash_name) or {}
+    return redis_client_15.hgetall(hash_name) or {}
 
 def load_data_from_redis_have_key(hash_name, key):
     """Tải dữ liệu từ Redis theo hash_name và key và định dạng lại dữ liệu."""
-    data = redis_client.hget(hash_name, key)
+    data = redis_client_15.hget(hash_name, key)
     
     if data:
         # Chuyển đổi dữ liệu JSON thành từ điển Python
@@ -60,7 +69,21 @@ def load_data_from_redis_have_key(hash_name, key):
 
 def save_data_to_redis(hash_name, key, value):
     """Lưu dữ liệu vào Redis DB 15 dưới dạng hash."""
-    redis_client.hset(hash_name, key, value)
+    redis_client_15.hset(hash_name, key, value)
+    
+def save_data_to_redis_register_domain(hash_name, key, value):
+    """Lưu dữ liệu vào Redis DB 15 dưới dạng hash."""
+    if redis_client_15.hexists(hash_name, key):
+        return False  # Key already exists
+    redis_client_15.hset(hash_name, key, json.dumps(value))
+    return True  # Key successfully added
+
+def save_data_to_redis_register_sub_shop(hash_name, key, value):
+    """Lưu dữ liệu vào Redis DB 15 dưới dạng hash."""
+    if redis_client_15.hexists(hash_name, key):
+        return False  # Key already exists
+    redis_client_14.hset(hash_name, key, json.dumps(value))
+    return True  # Key successfully added
 
 def allowed_file(filename):
     """Kiểm tra xem tệp có phải là loại được phép không."""
