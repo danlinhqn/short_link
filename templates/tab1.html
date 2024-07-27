@@ -14,17 +14,40 @@
     <button type="submit">Bấm tạo link</button>
 </form>
 {% if short_link %}
+<style>
+
+    h2 {
+        color: #333;
+        /* margin: 20px; */
+        margin: 0;
+    }
+
+
+    .result-image{
+        width: -webkit-fill-available;
+        border-radius: 3px;
+    }
+
+    #h3_c {
+        color: #333;
+        margin: 0px;
+        margin-bottom: 10px;
+    }
+
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', showPopup);
 </script>
 <div id="popup-background" class="popup-background"></div>
 <div id="result-popup" class="result-popup">
     <div class="result-header">
-        <p class="result-link-label">Link đã được tạo:</p>
+        <h3 class="result-link-label" id="h3_c">Link được tạo</h3>
         <div class="link-container">
             <span id="link-input" class="result-link">https://trum-riviu.realdealvn.click{{ short_link }}</span>
             <button class="copy-button" onclick="copyToClipboard()">Sao chép</button>
         </div>
+        
         <div class="link-container">
             <span id="link-input" class="result-link">https://review-phim.realdealvn.click{{ short_link }}</span>
             <button class="copy-button" onclick="copyToClipboard()">Sao chép</button>
@@ -35,7 +58,7 @@
         </div>
     </div>
     <div class="result-details">
-        <h2 class="result-title">{{ data[short_link[1:]].title }}</h2>
+        <h3 id="h3_c" class="result-title">{{ data[short_link[1:]].title }}</h3>
         <p class="result-description">{{ data[short_link[1:]].description }}</p>
         <div class="result-image-container">
             <img src="{{ data[short_link[1:]].image_url }}" alt="{{ data[short_link[1:]].title }}" class="result-image">

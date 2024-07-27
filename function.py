@@ -9,6 +9,7 @@ import random
 import string
 import hashlib
 import redis
+import re
 
 # Tải biến môi trường từ tệp .env
 load_dotenv()
@@ -16,7 +17,6 @@ load_dotenv()
 # Cấu hình upload hình ảnh
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
-
 
 # Kết nối tới Redis
 redis_client_15 = redis.StrictRedis(
@@ -36,15 +36,18 @@ redis_client_14 = redis.StrictRedis(
     decode_responses=True
 )
 
+# Hàm tạo chuỗi ngẫu nhiên
 def generate_random_string(length=3):
     """Tạo chuỗi ngẫu nhiên với độ dài được chỉ định."""
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for _ in range(length))
 
+# Hàm tải dữ liệu từ Redis
 def load_data_from_redis_with_hash(hash_name):
     """Tải dữ liệu từ Redis DB 15 dưới dạng hash."""
     return redis_client_15.hgetall(hash_name) or {}
 
+# Hàm tải dữ liệu từ Redis theo hash_name và key
 def load_data_from_redis_have_key(hash_name, key):
     """Tải dữ liệu từ Redis theo hash_name và key và định dạng lại dữ liệu."""
     data = redis_client_15.hget(hash_name, key)
@@ -67,10 +70,12 @@ def load_data_from_redis_have_key(hash_name, key):
     
     return {}
 
+# Hàm lưu dữ liệu vào Redis
 def save_data_to_redis(hash_name, key, value):
     """Lưu dữ liệu vào Redis DB 15 dưới dạng hash."""
     redis_client_15.hset(hash_name, key, value)
     
+# Hàm lưu dữ liệu vào Redis
 def save_data_to_redis_register_domain(hash_name, key, value):
     """Lưu dữ liệu vào Redis DB 15 dưới dạng hash."""
     if redis_client_15.hexists(hash_name, key):
@@ -78,6 +83,7 @@ def save_data_to_redis_register_domain(hash_name, key, value):
     redis_client_15.hset(hash_name, key, json.dumps(value))
     return True  # Key successfully added
 
+# Hàm lưu dữ liệu vào Redis
 def save_data_to_redis_register_sub_shop(hash_name, key, value):
     """Lưu dữ liệu vào Redis DB 15 dưới dạng hash."""
     if redis_client_15.hexists(hash_name, key):
@@ -85,10 +91,17 @@ def save_data_to_redis_register_sub_shop(hash_name, key, value):
     redis_client_14.hset(hash_name, key, json.dumps(value))
     return True  # Key successfully added
 
+# Hàm kiểm tra key trong hash
+def check_key_in_hash(hash_name, key):
+    """Kiểm tra giá trị của key trong một hash trong Redis."""
+    return redis_client_15.hexists(hash_name, key)
+
+# Kiểm tra xem tệp có phải là loại được phép không.
 def allowed_file(filename):
     """Kiểm tra xem tệp có phải là loại được phép không."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Hàm tạo liên kết rút gọn
 def make_short_link(title, description, image_url, link_url):
     """Tạo liên kết rút gọn và lưu vào Redis."""
     # Tạo mã hash cho URL
@@ -113,6 +126,7 @@ def make_short_link(title, description, image_url, link_url):
 
     return f"/{url_hash}"
 
+# Hàm tải hình ảnh lên Google Drive
 def upload_image_to_drive(image_path, image_name):
     """Tải hình ảnh lên Google Drive và trả về URL thumbnail."""
     # Đọc nội dung của tệp private_key.pem
@@ -159,3 +173,10 @@ def upload_image_to_drive(image_path, image_name):
     
     # Tạo đường dẫn thumbnail cho hình ảnh
     return f"https://lh3.googleusercontent.com/d/{file_id}"
+
+# Hàm xử lý URL clear
+def clean_url(url):
+    """Loại bỏ các phần tử như https://, http://, và www. khỏi URL."""
+    # Sử dụng regex để loại bỏ các phần tử không mong muốn
+    cleaned_url = re.sub(r'^https?://(www\.)?', '', url)
+    return cleaned_url

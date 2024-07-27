@@ -217,12 +217,12 @@ button:hover {
     max-width: 90%;
     max-height: 80vh;
     overflow-y: auto;
-    text-align: center;
+    text-align: left;
 }
 
 .result-header {
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 15px;
+    /* border-bottom: 2px solid #ddd;
+    padding-bottom: 15px; */
     margin-bottom: 20px;
 }
 
@@ -274,4 +274,42 @@ button:hover {
 }
 .message{
     margin: 20px;
+}
+
+.link-container {
+  
+    display: flex;
+    justify-content: space-between; /* Căn chỉnh các phần tử giữa hai đầu của container */
+    align-items: center; /* Căn giữa các phần tử theo chiều dọc */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    background-color: #fff;
+    margin-bottom: 10px;
+}
+
+.result-link {
+    font-size: 14px;
+    color: #007bff;
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Hiển thị dấu "..." nếu liên kết quá dài */
+    white-space: nowrap; /* Ngăn ngắt dòng trong liên kết */
+    max-width: 80%; /* Giới hạn chiều rộng của liên kết để không bị tràn */
+}
+
+.copy-button {
+    background-color: #007bff; /* Màu nền của nút */
+    color: #fff; /* Màu chữ của nút */
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px; /* Bo góc nút */
+    transition: background-color 0.3s; /* Hiệu ứng chuyển màu nền */
+    margin: 0;
+}
+
+.copy-button:hover {
+    background-color: #0056b3; /* Màu nền khi di chuột qua */
 }

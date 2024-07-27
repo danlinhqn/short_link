@@ -53,16 +53,38 @@
             background-color: #45a049;
         }
 
-        #message {
+        #message_tab2 {
             margin: 20px;
             font-weight: bold;
             white-space: pre-line; /* This will preserve line breaks */
         }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading p {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
     </style>
 </head>
 <body>
     <h3>Tên Miền Shop Của Bạn</h3>
-    <p id="message"  ></p>
+    <p id="message_tab2"  ></p>
     <form id="domain-form" enctype="multipart/form-data">
         <label for="shop_link">Link liên kết:</label>
         <input type="text" id="shop_link" name="shop_link" required>
@@ -78,9 +100,14 @@
         <button type="submit">Đăng ký tên miền</button>
     </form>
 
+    <div id="loading" class="loading">
+        <p>Xin vui lòng chờ chút...</p>
+    </div>
+
     <script>
         const domainInput = document.getElementById('domain_name');
         const domainSuffix = '.riviu.online';
+        const loading = document.getElementById('loading');
 
         // Set the initial value with the suffix
         domainInput.value = domainSuffix;
@@ -126,28 +153,31 @@
             event.preventDefault();
 
             const formData = new FormData(this);
-
-            fetch('{{ url_for("register_domain") }}', {
+            loading.style.display = 'flex';
+            fetch('/register-domain', {
                 method: 'POST',
                 body: formData
             })
+
             .then(response => response.json())
             .then(data => {
-                const message = document.getElementById('message');
+                const message_tab2 = document.getElementById('message_tab2');
+                loading.style.display = 'none';
                 if (data.success) {
-                    message.style.color = 'green';
-                    message.textContent = 'Đăng ký: thành công!\nKết quả sẽ được gửi qua email của bạn trong 24h.';
+                    message_tab2.style.color = 'green';
+                    message_tab2.textContent = 'Đăng ký: thành công!\nKết quả sẽ được gửi qua email của bạn trong 24h.';
                     clearForm(); // Clear the form fields upon successful registration
                 } else {
-                    message.style.color = 'red';
-                    message.textContent = 'Đăng ký thất bại: ' + data.error;
+                    message_tab2.style.color = 'red';
+                    message_tab2.textContent = 'Đăng ký thất bại: ' + data.error;
                     clearForm(); // Optionally clear the form fields upon failure
                 }
             })
             .catch(error => {
-                const message = document.getElementById('message');
-                message.style.color = 'red';
-                message.textContent = 'Có lỗi xảy ra: ' + error.message;
+                const message_tab2 = document.getElementById('message_tab2');
+                loading.style.display = 'none';
+                message_tab2.style.color = 'red';
+                message_tab2.textContent = 'Có lỗi xảy ra: ' + error.message_tab2;
             });
         });
     </script>
