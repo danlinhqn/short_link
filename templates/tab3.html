@@ -72,11 +72,11 @@
         <input type="text" id="sub_shop_link" name="sub_shop_link" required disabled>
 
         <label for="connect_link">Link liên kết:</label>
-        <input type="text" id="connect_link" name="connect_link" required>
+        <input type="text" id="connect_link" name="connect_link" required >
         
         <button type="submit">Đăng ký shop phụ</button>
     </form>
-    <div id="loading" class="loading">
+    <div id="loading_tab3" class="loading">
         <p>Xin vui lòng chờ chút...</p>
     </div>
 
@@ -86,7 +86,7 @@
         const connectLink = document.getElementById('connect_link');
         const form = document.getElementById('sub-shop-form');
         const message_tab3 = document.getElementById('message_tab3');
-        const loading = document.getElementById('loading');
+        const loading_tab3 = document.getElementById('loading_tab3');
 
         mainShopLink.addEventListener('input', function() {
             const mainLink = this.value.trim();
@@ -154,16 +154,15 @@
             event.preventDefault();
             
             const formData = new FormData(form);
-            loading.style.display = 'flex';
+            loading_tab3.style.display = 'flex';
 
             fetch('/register-sub-shop', {
                 method: 'POST',
                 body: formData
             })
-            
             .then(response => response.json())
             .then(data => {
-                loading.style.display = 'none';
+                loading_tab3.style.display = 'none';
                 if (data.success) {
                     message_tab3.style.color = 'green';
                     message_tab3.textContent = 'Shop phụ đã được đăng ký thành công!';
@@ -173,7 +172,7 @@
                 }
             })
             .catch(error => {
-                loading.style.display = 'none';
+                loading_tab3.style.display = 'none';
                 message_tab3.style.color = 'red';
                 message_tab3.textContent = 'Có lỗi xảy ra: ' + error.message_tab3;
             });

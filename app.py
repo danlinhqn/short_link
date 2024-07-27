@@ -134,7 +134,7 @@ def register_sub_shop():
             # Kiểm tra xem domain đã tồn tại chưa
             key_exists = check_key_in_hash("domain_approved", main_shop_link)
             if key_exists == False:
-                error_message = "Domain Shop này chưa tồn tại"
+                error_message = "Domain shop này chưa tồn tại!"
                 return jsonify(success=False, error=error_message)
             
             # Lưu thông tin vào Redis

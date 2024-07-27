@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tạo Link Bán Hàng & Hình Ảnh</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
     <script src="{{ url_for('static', filename='scripts.js') }}"></script>
     <script>
@@ -66,10 +67,14 @@
         <div class="container">
             <nav class="tabs">
                 <ul>
-                    <li><a href="javascript:void(0);" class="tab-link" id="tab1-link" onclick="showTab('tab1')">Tạo Link Bán Hàng</a></li>
-                    <li><a href="javascript:void(0);" class="tab-link" id="tab2-link" onclick="showTab('tab2')">Đăng ký Tên Miền</a></li>
-                    <li><a href="javascript:void(0);" class="tab-link" id="tab3-link" onclick="showTab('tab3')">Đăng ký Shop Phụ</a></li>
-                    <li><a href="javascript:void(0);" class="tab-link" id="tab4-link" onclick="showTab('tab4')">Tra Cứu</a></li>
+                    <li><a href="javascript:void(0);" class="tab-link" id="tab1-link" onclick="showTab('tab1')">
+                        <i class="fa fa-link"></i> Tạo Link Bán Hàng</a></li>
+                    <li><a href="javascript:void(0);" class="tab-link" id="tab2-link" onclick="showTab('tab2')">
+                        <i class="fa fa-globe"></i> Đăng ký Tên Miền</a></li>
+                    <li><a href="javascript:void(0);" class="tab-link" id="tab3-link" onclick="showTab('tab3')">
+                        <i class="fa fa-store"></i> Đăng ký Shop Phụ</a></li>
+                    <li><a href="javascript:void(0);" class="tab-link" id="tab4-link" onclick="showTab('tab4')">
+                        <i class="fa fa-search"></i> Tra Cứu</a></li>
                 </ul>
             </nav>
             <div id="tab1" class="tab-content">

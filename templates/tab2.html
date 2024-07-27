@@ -99,15 +99,15 @@
         
         <button type="submit">Đăng ký tên miền</button>
     </form>
-
-    <div id="loading" class="loading">
+   
+    <div id="loading_tab2" class="loading">
         <p>Xin vui lòng chờ chút...</p>
     </div>
 
     <script>
         const domainInput = document.getElementById('domain_name');
         const domainSuffix = '.riviu.online';
-        const loading = document.getElementById('loading');
+        const loading_tab2 = document.getElementById('loading_tab2');
 
         // Set the initial value with the suffix
         domainInput.value = domainSuffix;
@@ -153,16 +153,16 @@
             event.preventDefault();
 
             const formData = new FormData(this);
-            loading.style.display = 'flex';
-            fetch('/register-domain', {
+            loading_tab2.style.display = 'flex';
+
+            fetch('{{ url_for("register_domain") }}', {
                 method: 'POST',
                 body: formData
             })
-
             .then(response => response.json())
             .then(data => {
+                loading_tab2.style.display = 'none';
                 const message_tab2 = document.getElementById('message_tab2');
-                loading.style.display = 'none';
                 if (data.success) {
                     message_tab2.style.color = 'green';
                     message_tab2.textContent = 'Đăng ký: thành công!\nKết quả sẽ được gửi qua email của bạn trong 24h.';
@@ -174,8 +174,8 @@
                 }
             })
             .catch(error => {
+                loading_tab2.style.display = 'none';
                 const message_tab2 = document.getElementById('message_tab2');
-                loading.style.display = 'none';
                 message_tab2.style.color = 'red';
                 message_tab2.textContent = 'Có lỗi xảy ra: ' + error.message_tab2;
             });
