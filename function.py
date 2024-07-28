@@ -16,6 +16,7 @@ from flask import Flask, render_template_string
 from flask import Flask, jsonify, request, render_template, redirect, render_template_string, url_for
 import json
 import os
+import requests
 
 # Tải biến môi trường từ tệp .env
 load_dotenv()
@@ -215,11 +216,9 @@ def fetch_page_details(url):
         title_tag = soup.find('title')
         title = title_tag.string if title_tag else "Default Title"
         
-        # Tìm thẻ meta có thuộc tính og:image
         og_image_tag = soup.find('meta', property='og:image')
         og_image = og_image_tag['content'] if og_image_tag else None
         
-        # Lấy tất cả các thẻ meta và link cần thiết
         meta_tags = soup.find_all('meta')
         link_tags = soup.find_all('link')
         
@@ -231,10 +230,11 @@ def fetch_page_details(url):
         for tag in link_tags:
             link_string += str(tag) + "\n"
         
+        print(title, og_image, meta_string, link_string)
         return title, og_image, meta_string, link_string
+
     return "Default Title", None, "", ""
 
-# Render Web view trang liên kết 
 def render_web_view(page_url):
     page_title, og_image, meta_string, link_string = fetch_page_details(page_url)
     

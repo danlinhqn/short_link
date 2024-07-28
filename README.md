@@ -17,6 +17,7 @@ docker exec -it nginx sh
 nano /etc/nginx/conf.d/default.conf
 ```
 
+
 ```yaml
 # Domain riviu.online ( Chấp nhận tất cả subdomain )
 server {

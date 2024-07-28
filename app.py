@@ -4,6 +4,8 @@ from function  import *
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
+
 # Chuyển hướng short đến URL 
 @app.route('/<item_id>')
 def redirect_to_url_shop_sell_product(item_id):
