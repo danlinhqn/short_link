@@ -254,19 +254,10 @@ def fetch_page_details(url):
 # Hàm tải nội dung trang web
 def fetch_page_content(page_url):
     headers = {'User-Agent': 'Mozilla/5.0'}
-    try:
-        response = requests.get(page_url, headers=headers, allow_redirects=True)
-        if response.status_code == 200:
-            return response.text
-        elif response.status_code in [301, 302, 303, 307, 308]:
-            # Nếu trang web chuyển hướng, lấy URL mới và fetch lại nội dung
-            new_url = response.headers['Location']
-            return fetch_page_content(new_url)
-        else:
-            return None
-    except Exception as e:
-        print(f"Exception occurred: {e}")
-        return None
+    response = requests.get(page_url, headers=headers)
+    if response.status_code == 200:
+        return response.text
+    return None
 
 # Hàm cập nhật các liên kết trong nội dung trang web
 def update_links(page_content, base_url):
@@ -325,7 +316,7 @@ def render_web_view_pass_proxy(page_url):
     </head>
     <body>
         <div class="content">
-            {updated_content}
+            {page_content}
         </div>
     </body>
     </html>
