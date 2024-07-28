@@ -253,7 +253,7 @@ def fetch_page_details(url):
 
 # Hàm tải nội dung trang web
 def fetch_page_content(page_url):
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+    headers = {'User-Agent': 'Mozilla/5.0'}
     response = requests.get(page_url, headers=headers)
     if response.status_code == 200:
         return response.text
