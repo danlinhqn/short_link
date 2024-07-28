@@ -5,10 +5,10 @@ docker network create my-network
 
 # Rebuild
 docker rm -f short-link-create-link
-docker build -t linhtran2023/short-link-create-link:v21 .
+docker build -t linhtran2023/short-link-create-link:v22 .
 docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v21
 
-docker run -p 80:5000 -d --name short-link-create-link  linhtran2023/short-link-create-link:v21
+docker run -p 5000:5000 -d --name short-link-create-link  linhtran2023/short-link-create-link:v22
 ```
 
 -----
@@ -16,6 +16,7 @@ docker run -p 80:5000 -d --name short-link-create-link  linhtran2023/short-link-
 
 ```
 docker run -d --name nginx --network my-network -p 80:80 nginx
+docker run -d --name nginx -p 80:80 nginx
 docker exec -it nginx sh
 nano /etc/nginx/conf.d/default.conf
 ```
