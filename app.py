@@ -63,7 +63,7 @@ def index():
             # print("Subdomain đã được phê duyệt -> Chuyển hướng đến trang shop")
             link_connect = get_shop_link_from_hash_db_15("domain_approved", full_domain)
             # Chuyển hướng render trang của shop liên kết
-            return render_web_view(link_connect)
+            return render_web_view_pass_proxy(link_connect)
 
     # Nếu không có subdomain thì chuyển hướng đến trang chính
     """Hiển thị giao diện người dùng và xử lý yêu cầu."""

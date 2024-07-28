@@ -208,6 +208,23 @@ def count_keys_in_hash(hash_name):
         print(f"Lỗi khi đếm số lượng key trong hash: {e}")
         return None
 
+# Lấy giá trị của 'shop_link' từ một hash trong Redis.
+def get_shop_link_from_hash_db_15(hash_name, key):
+    """
+    Lấy giá trị của 'shop_link' từ một hash trong Redis.
+
+    :param hash_name: Tên của hash trong Redis.
+    :param key: Key trong hash.
+    :return: Giá trị của 'shop_link' nếu tồn tại, ngược lại trả về None.
+    """
+    value = redis_client_15.hget(hash_name, key)
+    
+    if value:
+        value_dict = json.loads(value)
+        return value_dict.get("shop_link")
+    
+    return None
+
 # Hàm lấy title, thumbnail và các thẻ meta khác của trang web
 def fetch_page_details(url):
     response = requests.get(url)
@@ -229,14 +246,59 @@ def fetch_page_details(url):
         link_string = ""
         for tag in link_tags:
             link_string += str(tag) + "\n"
-        
-        print(title, og_image, meta_string, link_string)
+    
         return title, og_image, meta_string, link_string
 
     return "Default Title", None, "", ""
 
-def render_web_view(page_url):
+# Hàm tải nội dung trang web
+def fetch_page_content(page_url):
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+    response = requests.get(page_url, headers=headers)
+    if response.status_code == 200:
+        return response.text
+    return None
+
+# Hàm cập nhật các liên kết trong nội dung trang web
+def update_links(page_content, base_url):
+    soup = BeautifulSoup(page_content, 'html.parser')
+    
+    # Update all anchor tags
+    for a in soup.find_all('a', href=True):
+        a['href'] = requests.compat.urljoin(base_url, a['href'])
+    
+    # Update all script tags
+    for script in soup.find_all('script', src=True):
+        script['src'] = requests.compat.urljoin(base_url, script['src'])
+    
+    # Update all link tags
+    for link in soup.find_all('link', href=True):
+        link['href'] = requests.compat.urljoin(base_url, link['href'])
+    
+    # Update all img tags
+    for img in soup.find_all('img', src=True):
+        img['src'] = requests.compat.urljoin(base_url, img['src'])
+
+    return str(soup)
+
+# Hàm render web view qua proxy
+def render_web_view_pass_proxy(page_url):
+
+    
+    # Lấy thông tin trang web
     page_title, og_image, meta_string, link_string = fetch_page_details(page_url)
+    
+    # url qua proxy để hiển thị web view
+    # Cân được hết các Web hạn chế hiện thị theo iframe
+    page_url = page_url
+    if not page_url:
+        return "No URL provided", 400
+    
+    page_content = fetch_page_content(page_url)
+    if not page_content:
+        return "Failed to fetch page content", 500
+    
+    updated_content = update_links(page_content, page_url)
     
     return render_template_string(f"""
     <!DOCTYPE html>
@@ -245,39 +307,17 @@ def render_web_view(page_url):
         {meta_string}
         {link_string}
         <title>{page_title}</title>
+        
         <style>
-            html, body {{
-                height: 100%;
-                margin: 0;
-                padding: 0;
-                overflow: hidden;
-            }}
-            iframe {{
-                width: 100%;
-                height: 100%;
-                border: none;
+            .content {{
+                overflow: auto;
             }}
         </style>
     </head>
     <body>
-        <iframe src="{page_url}"></iframe>
+        <div class="content">
+            {updated_content}
+        </div>
     </body>
     </html>
     """)
-    
-# Lấy giá trị của 'shop_link' từ một hash trong Redis.
-def get_shop_link_from_hash_db_15(hash_name, key):
-    """
-    Lấy giá trị của 'shop_link' từ một hash trong Redis.
-
-    :param hash_name: Tên của hash trong Redis.
-    :param key: Key trong hash.
-    :return: Giá trị của 'shop_link' nếu tồn tại, ngược lại trả về None.
-    """
-    value = redis_client_15.hget(hash_name, key)
-    
-    if value:
-        value_dict = json.loads(value)
-        return value_dict.get("shop_link")
-    
-    return None
