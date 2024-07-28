@@ -5,10 +5,12 @@ docker network create my-network
 
 # Rebuild
 docker rm -f short-link-create-link
-docker build -t linhtran2023/short-link-create-link:v22 .
-docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v21
+docker build -t linhtran2023/short-link-create-link:v23 .
 
-docker run -p 5000:5000 -d --name short-link-create-link  linhtran2023/short-link-create-link:v22
+docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v23
+
+# Chạy thường
+docker run -p 5000:5000 -d --name short-link-create-link  linhtran2023/short-link-create-link:v23
 ```
 
 -----
@@ -27,7 +29,7 @@ nano /etc/nginx/conf.d/default.conf
 server {
     listen 80;
     server_name .riviu.online;
-    location /create-link {
+    location / {
         proxy_pass http://short-link-create-link:5000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
