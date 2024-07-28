@@ -36,29 +36,43 @@
         margin-bottom: 10px;
     }
 
-
-
 </style>
 
 <script>
+    function copyToClipboard(elementId) {
+        var copyText = document.getElementById(elementId).textContent;
+        var tempInput = document.createElement("input");
+        tempInput.style.position = "absolute";
+        tempInput.style.left = "-9999px";
+        tempInput.value = copyText;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        alert("Đã sao chép: " + copyText);
+    }
+
     document.addEventListener('DOMContentLoaded', showPopup);
 </script>
+
 <div id="popup-background" class="popup-background"></div>
 <div id="result-popup" class="result-popup">
     <div class="result-header">
         <h3 class="result-link-label" id="h3_c">Link được tạo</h3>
+        
         <div class="link-container">
-            <span id="link-input" class="result-link">https://trum.riviu.online{{ short_link }}</span>
-            <button class="copy-button" onclick="copyToClipboard()">Sao chép</button>
+            <span id="link-input-1" class="result-link">https://trum.riviu.online{{ short_link }}</span>
+            <button class="copy-button" onclick="copyToClipboard('link-input-1')">Sao chép</button>
         </div>
         
         <div class="link-container">
-            <span id="link-input" class="result-link">https://review-phim.realdealvn.click{{ short_link }}</span>
-            <button class="copy-button" onclick="copyToClipboard()">Sao chép</button>
+            <span id="link-input-2" class="result-link">https://review-phim.realdealvn.click{{ short_link }}</span>
+            <button class="copy-button" onclick="copyToClipboard('link-input-2')">Sao chép</button>
         </div>
+        
         <div class="link-container">
-            <span id="link-input" class="result-link">https://tin-hot.realdealvn.click{{ short_link }}</span>
-            <button class="copy-button" onclick="copyToClipboard()">Sao chép</button>
+            <span id="link-input-3" class="result-link">https://tin-hot.realdealvn.click{{ short_link }}</span>
+            <button class="copy-button" onclick="copyToClipboard('link-input-3')">Sao chép</button>
         </div>
     </div>
     <div class="result-details">
@@ -69,7 +83,7 @@
         </div>
     </div>
     <div class="result-footer">
-        <button class="close-button" onclick="closePopup()">Đóng</button>
+        <button  onclick="closePopup()">Đóng</button>
     </div>
 </div>
 {% endif %}
