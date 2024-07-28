@@ -55,7 +55,8 @@ def index():
     # Tách subdomain ra nếu có
     subdomain = host.split('.')[0] if '.' in host else None
     
-    if subdomain and subdomain != "trum":
+    # Tại đây kiểm tra nếu đường dẫn có sub domain và khác với sub domain chính thì thực hiện
+    if subdomain and subdomain != os.getenv("SUB_DOMAIN_MAIN"):
         # Kiểm tra subdomain có trong domain_approved không
         full_domain = subdomain + "." + os.getenv("DOMAIN_CAN_REGISTER_SUBDOMAINS")
         if check_key_in_hash_db_15("domain_approved", full_domain):
