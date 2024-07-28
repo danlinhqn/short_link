@@ -194,7 +194,7 @@ def get_keys_in_hash(hash_name):
     return redis_client_14.hkeys(hash_name)
 
 # Hàm kiểm tra hash có tồn tại hay không
-def check_hash_exists(hash_name):
+def check_hash_exists_db_14(hash_name):
     """Kiểm tra xem một hash có tồn tại trong Redis hay không."""
     return redis_client_14.exists(hash_name)
 
@@ -225,7 +225,22 @@ def get_shop_link_from_hash_db_15(hash_name, key):
     
     return None
 
+# Lấy giá trị của 'shop_link' từ một hash trong Redis.
+def get_connect_link_from_hash_db_14(hash_name, key):
+    """
+    Lấy giá trị của 'shop_link' từ một hash trong Redis.
 
+    :param hash_name: Tên của hash trong Redis.
+    :param key: Key trong hash.
+    :return: Giá trị của 'shop_link' nếu tồn tại, ngược lại trả về None.
+    """
+    value = redis_client_14.hget(hash_name, key)
+    
+    if value:
+        value_dict = json.loads(value)
+        return value_dict.get("connect_link")
+    
+    return None
 # Hàm lấy title, thumbnail và các thẻ meta khác của trang web
 def fetch_page_details(url):
     response = requests.get(url)
@@ -254,7 +269,8 @@ def fetch_page_details(url):
         
     return "Default Title", None, "", ""
 
-def render_web_view_pass_proxy(page_url):
+# Hàm render web view qua proxy
+def render_web_view(page_url):
     
     try:
         # Thử tải trang để kiểm tra lỗi X-Frame-Options
@@ -294,3 +310,34 @@ def render_web_view_pass_proxy(page_url):
     </html>
     """)
     
+# Thumnail Web can post to Facebook, ...
+def render_thumnail_short_link(item):
+    # Tạo nội dung HTML với dữ liệu từ item
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang='en'>
+    <head>
+        <meta charset='UTF-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <title>{item['title']}</title>
+        <meta property='og:title' content='{item['title']}'>
+        <meta property='og:description' content='{item['description']}'>
+        <meta property='og:image' content='{item['image_url']}'>
+        <meta property='og:url' content='{item['post_link']}'>
+        <meta property='og:type' content='website'>
+        <meta name='twitter:card' content='summary_large_image'>
+        <meta name='twitter:title' content='{item['title']}'>
+        <meta name='twitter:description' content='{item['description']}'>
+        <meta name='twitter:image' content='{item['image_url']}'>
+    </head>
+    <body>
+        <script>
+            setTimeout(function() {{
+                window.location.href = "{item['link_url']}";
+            }}); 
+        </script>
+    </body>
+    </html>
+    """
+    
+    return html_content

@@ -73,6 +73,14 @@ input[type="text"], input[type="file"] {
     font-size: 15px;
 }
 
+input {
+    display: block;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 100%;
+    max-width: 100%;
+}
+
 button {
     margin-top: 20px;
     padding: 10px;

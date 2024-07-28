@@ -7,44 +7,71 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Chuyển hướng short đến URL 
 @app.route('/<item_id>')
 def redirect_to_url_shop_sell_product(item_id):
+    
+
+    
+    # Tại đây sẽ kiểm item_id có thuộc giá trị ở sub shop hay không
+    # Kiểm tra subdomain có trong domain_approved không
+    # Tại đây sẽ kiểm tra lấy subdmain của domain trước khi chuyển hướng
+    host = request.host
+    # Tách subdomain ra nếu có
+    subdomain = host.split('.')[0] if '.' in host else None
+    
+    if subdomain:
+        # Kiểm tra subdomain có trong domain_approved không
+        full_domain = subdomain + "." + os.getenv("DOMAIN_CAN_REGISTER_SUBDOMAINS")
+        if check_key_in_hash_db_15("domain_approved", full_domain):
+            # print("Có subdmain -> Đã được phê duyệt")
+            
+            # Rồi sau đó kiểm tra tiếp key trong hash dựa theo domain lấy được
+            if check_hash_exists_db_14(full_domain):
+                # print("Shop này có shop phụ")
+                # Khi có shop phụ rồi mới kiểm tra shop phụ này nằm ở key nào 
+                # Lây đường link để chuyển hướng luôn
+                link_connect = (get_connect_link_from_hash_db_14(full_domain, full_domain + "/" + item_id))
+                return render_web_view(link_connect)
+            
+    # ---------------------------------------------------------------------- //
     """Chuyển hướng đến URL dựa trên mã rút gọn."""
     data = load_data_from_redis_with_hash('short_link')
     item_data = data.get(item_id)
     
+    # Các trường khác thì return ra trang thông thường
     if not item_data:
         return "Không tìm thấy thông tin cho ID này", 404
 
     # Dữ liệu đã được lưu dưới dạng chuỗi JSON, không cần parse lại
     item = json.loads(item_data)
+
+    # # Tạo nội dung HTML với dữ liệu từ item
+    # html_content = f"""
+    # <!DOCTYPE html>
+    # <html lang='en'>
+    # <head>
+    #     <meta charset='UTF-8'>
+    #     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    #     <title>{item['title']}</title>
+    #     <meta property='og:title' content='{item['title']}'>
+    #     <meta property='og:description' content='{item['description']}'>
+    #     <meta property='og:image' content='{item['image_url']}'>
+    #     <meta property='og:url' content='{item['post_link']}'>
+    #     <meta property='og:type' content='website'>
+    #     <meta name='twitter:card' content='summary_large_image'>
+    #     <meta name='twitter:title' content='{item['title']}'>
+    #     <meta name='twitter:description' content='{item['description']}'>
+    #     <meta name='twitter:image' content='{item['image_url']}'>
+    # </head>
+    # <body>
+    #     <script>
+    #         setTimeout(function() {{
+    #             window.location.href = "{item['link_url']}";
+    #         }}); 
+    #     </script>
+    # </body>
+    # </html>
+    # """
     
-    # Tạo nội dung HTML với dữ liệu từ item
-    html_content = f"""
-    <!DOCTYPE html>
-    <html lang='en'>
-    <head>
-        <meta charset='UTF-8'>
-        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <title>{item['title']}</title>
-        <meta property='og:title' content='{item['title']}'>
-        <meta property='og:description' content='{item['description']}'>
-        <meta property='og:image' content='{item['image_url']}'>
-        <meta property='og:url' content='{item['post_link']}'>
-        <meta property='og:type' content='website'>
-        <meta name='twitter:card' content='summary_large_image'>
-        <meta name='twitter:title' content='{item['title']}'>
-        <meta name='twitter:description' content='{item['description']}'>
-        <meta name='twitter:image' content='{item['image_url']}'>
-    </head>
-    <body>
-        <script>
-            setTimeout(function() {{
-                window.location.href = "{item['link_url']}";
-            }}); // Chuyển hướng sau 3 giây
-        </script>
-    </body>
-    </html>
-    """
-    return render_template_string(html_content)
+    return render_template_string(render_thumnail_short_link(item))
 
 # Làm short link -> Tab1
 @app.route('/', methods=['GET', 'POST'])
@@ -61,7 +88,7 @@ def index():
             # print("Subdomain đã được phê duyệt -> Chuyển hướng đến trang shop")
             link_connect = get_shop_link_from_hash_db_15("domain_approved", full_domain)
             # Chuyển hướng render trang của shop liên kết
-            return render_web_view_pass_proxy(link_connect)
+            return render_web_view(link_connect)
 
     # Nếu không có subdomain thì chuyển hướng đến trang chính
     """Hiển thị giao diện người dùng và xử lý yêu cầu."""
@@ -176,7 +203,7 @@ def get_sub_shop():
     search_main_shop_link = clean_url(request.form.get('search_main_shop_link'))
     try:
         # Tại đây kiểm tra hash này có tồn tại không 
-        if check_hash_exists(search_main_shop_link):
+        if check_hash_exists_db_14(search_main_shop_link):
            
             # Tìm kiếm cửa hàng con
             shops = get_keys_in_hash(search_main_shop_link)
