@@ -5,12 +5,13 @@ docker network create my-network
 
 # Rebuild
 docker rm -f short-link-create-link
-docker build -t linhtran2023/short-link-create-link:v23 .
+docker build -t linhtran2023/short-link-create-link:v25 .
 
-docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v23
+# Khi chạy với 1 lớp mạng khác
+docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v25
 
-# Chạy thường
-docker run -p 5000:5000 -d --name short-link-create-link  linhtran2023/short-link-create-link:v23
+# Khi chạy ở lớp mạng Localhost mặc định
+docker run -p 5000:5000 -d --name short-link-create-link  linhtran2023/short-link-create-link:v25
 ```
 
 -----
@@ -23,8 +24,10 @@ docker exec -it nginx sh
 nano /etc/nginx/conf.d/default.conf
 ```
 
-
 ```yaml
+# Lưu ý nếu cho nginx trỏ thẳng vào localhost và pod của nó đang chạy service thì sẽ nhanh hơn 
+# Nhưng phải đóng hết các cổng chỉ cho mở cộng 80 và cổng 22 bằng tường lửa.
+
 # Domain riviu.online ( Chấp nhận tất cả subdomain )
 server {
     listen 80;

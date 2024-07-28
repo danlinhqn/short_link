@@ -17,6 +17,7 @@ from flask import Flask, jsonify, request, render_template, redirect, render_tem
 import json
 import os
 import requests
+from flask_caching import Cache
 
 # Tải biến môi trường từ tệp .env
 load_dotenv()
@@ -241,6 +242,7 @@ def get_connect_link_from_hash_db_14(hash_name, key):
         return value_dict.get("connect_link")
     
     return None
+
 # Hàm lấy title, thumbnail và các thẻ meta khác của trang web
 def fetch_page_details(url):
     response = requests.get(url)
@@ -341,3 +343,18 @@ def render_thumnail_short_link(item):
     """
     
     return html_content
+
+# Hàm xóa khoản trắng trong string
+def remove_whitespace(input_string):
+    """
+    Hàm xóa tất cả dấu cách và khoảng trắng trong chuỗi.
+    
+    Parameters:
+    input_string (str): Chuỗi đầu vào cần xóa khoảng trắng.
+
+    Returns:
+    str: Chuỗi đã xóa khoảng trắng.
+    """
+    # Xóa tất cả các khoảng trắng, bao gồm dấu cách, tab, newline, v.v.
+    return ''.join(input_string.split())
+

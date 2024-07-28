@@ -4,12 +4,13 @@ from function  import *
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# Cấu hình cache
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+
 # Chuyển hướng short đến URL 
 @app.route('/<item_id>')
+@cache.cached(timeout=600, query_string=True) # Cache 10 Phút
 def redirect_to_url_shop_sell_product(item_id):
-    
-
-    
     # Tại đây sẽ kiểm item_id có thuộc giá trị ở sub shop hay không
     # Kiểm tra subdomain có trong domain_approved không
     # Tại đây sẽ kiểm tra lấy subdmain của domain trước khi chuyển hướng
@@ -42,39 +43,12 @@ def redirect_to_url_shop_sell_product(item_id):
 
     # Dữ liệu đã được lưu dưới dạng chuỗi JSON, không cần parse lại
     item = json.loads(item_data)
-
-    # # Tạo nội dung HTML với dữ liệu từ item
-    # html_content = f"""
-    # <!DOCTYPE html>
-    # <html lang='en'>
-    # <head>
-    #     <meta charset='UTF-8'>
-    #     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    #     <title>{item['title']}</title>
-    #     <meta property='og:title' content='{item['title']}'>
-    #     <meta property='og:description' content='{item['description']}'>
-    #     <meta property='og:image' content='{item['image_url']}'>
-    #     <meta property='og:url' content='{item['post_link']}'>
-    #     <meta property='og:type' content='website'>
-    #     <meta name='twitter:card' content='summary_large_image'>
-    #     <meta name='twitter:title' content='{item['title']}'>
-    #     <meta name='twitter:description' content='{item['description']}'>
-    #     <meta name='twitter:image' content='{item['image_url']}'>
-    # </head>
-    # <body>
-    #     <script>
-    #         setTimeout(function() {{
-    #             window.location.href = "{item['link_url']}";
-    #         }}); 
-    #     </script>
-    # </body>
-    # </html>
-    # """
     
     return render_template_string(render_thumnail_short_link(item))
 
 # Làm short link -> Tab1
 @app.route('/', methods=['GET', 'POST'])
+@cache.cached(timeout=600, query_string=True) # Cache 10 Phút
 def index():
     # Tại đây sẽ kiểm tra lấy subdmain của domain trước khi chuyển hướng
     host = request.host
@@ -128,9 +102,9 @@ def index():
 @app.route('/register-domain', methods=['POST'])
 def register_domain():
     """Xử lý đăng ký tên miền."""
-    shop_link = request.form.get('shop_link')
-    domain_name = request.form.get('domain_name')
-    email = request.form.get('email')
+    shop_link = remove_whitespace(request.form.get('shop_link'))
+    domain_name = remove_whitespace(request.form.get('domain_name'))
+    email = remove_whitespace(request.form.get('email'))
     error_message = None
     
     if domain_name.replace(".riviu.online","") == "":
@@ -160,10 +134,10 @@ def register_domain():
 @app.route('/register-sub-shop', methods=['POST'])
 def register_sub_shop():
     """Xử lý đăng ký cửa hàng con."""
-    main_shop_link = clean_url(request.form.get('main_shop_link'))
-    sub_shop_link = clean_url(request.form.get('sub_shop_link'))
-    connect_link = request.form.get('connect_link')
-    
+    main_shop_link = remove_whitespace(clean_url(request.form.get('main_shop_link')))
+    sub_shop_link = remove_whitespace(clean_url(request.form.get('sub_shop_link')))
+    connect_link = remove_whitespace(request.form.get('connect_link'))
+
      # Tại đây kiểm tra số lượng cửa hàng con đã đạt giới hạn chưa = 10
     if count_keys_in_hash(main_shop_link) > 10: 
         error_message = "Số lượng cửa hàng con đã đạt giới hạn!"
@@ -219,6 +193,3 @@ def get_sub_shop():
 # Main API Run -------------------------- //
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-
-# Thêm các loading cho các trang giống trang tab3
-# Thêm các điều kiện tự động xóa dấu cách ở các input
