@@ -19,12 +19,13 @@ import os
 import requests
 from flask_caching import Cache
 
+app = Flask(__name__)
+
+# Cấu hình cache
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+
 # Tải biến môi trường từ tệp .env
 load_dotenv()
-
-# Cấu hình upload hình ảnh
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 
 # Kết nối tới Redis
 redis_client_15 = redis.StrictRedis(
@@ -272,6 +273,7 @@ def fetch_page_details(url):
     return "Default Title", None, "", ""
 
 # Hàm render web view qua proxy
+@cache.cached(timeout=600, query_string=True) # Cache 10 Phút
 def render_web_view(page_url):
     
     try:

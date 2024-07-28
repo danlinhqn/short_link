@@ -1,15 +1,14 @@
 
 from function  import *
 
-app = Flask(__name__)
+# Cấu hình upload hình ảnh
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Cấu hình cache
-cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 # Chuyển hướng short đến URL 
 @app.route('/<item_id>')
-@cache.cached(timeout=600, query_string=True) # Cache 10 Phút
+# @cache.cached(timeout=600, query_string=True) # Cache 10 Phút
 def redirect_to_url_shop_sell_product(item_id):
     # Tại đây sẽ kiểm item_id có thuộc giá trị ở sub shop hay không
     # Kiểm tra subdomain có trong domain_approved không
