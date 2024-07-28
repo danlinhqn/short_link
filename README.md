@@ -5,7 +5,7 @@ docker network create my-network
 
 # Rebuild
 docker rm -f short-link-create-link
-docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v06
+docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v19
 ```
 
 -----
