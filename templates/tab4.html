@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tra cứu các shop phụ của bạn</title>
+    <title>Đăng ký shop phụ</title>
     <style>
         form {
             margin: 20px;
@@ -34,29 +34,9 @@
             background-color: #45a049;
         }
 
-        .results {
-            margin-top: 20px;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .copy-btn {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 5px 10px;
-        }
-
-        .copy-btn:hover {
-            background-color: #0056b3;
+        #message_tab4 {
+            margin: 20px;
+            font-weight: bold;
         }
 
         .loading {
@@ -64,75 +44,119 @@
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(255, 255, 255, 0.8);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
+
+        .loading p {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .shop-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .shop-link {
+            flex-grow: 1;
+            font-size: 16px;
+        }
+
+        .copy-button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
-    <div id="loading" class="loading">
-        <p>Xin vui lòng chờ chút...</p>
-    </div>
-    <h3>Tra Cứu Các Shop Phụ Của Bạn</h3>
-    <form id="searchForm">
-        <label for="main_shop_link">Link shop chính của bạn:</label>
-        <input type="text" id="main_shop_link" name="main_shop_link" required>
-        
+    <h3>Tìm Kiếm Shop Phụ Của Bạn</h3>
+    <p id="message_tab4"></p>
+    <form id="search-sub-shop-form" method="post" enctype="multipart/form-data">
+        <label for="search_main_shop_link">Link shop chính của bạn:</label>
+        <input type="text" id="search_main_shop_link" name="search_main_shop_link" required>
+
         <button type="submit">Tìm kiếm shop phụ</button>
     </form>
-
-    <div class="results" id="results"></div>
+    <div id="loading_tab4" class="loading">
+        <p>Xin vui lòng chờ chút...</p>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const searchForm = document.getElementById('searchForm');
-            searchForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                document.getElementById('loading').style.display = 'flex';
+            const form = document.getElementById('search-sub-shop-form');
+            const message_tab4 = document.getElementById('message_tab4');
+            const loading_tab4 = document.getElementById('loading_tab4');
 
-                const mainShopLink = document.getElementById('main_shop_link').value.trim();
-                if (mainShopLink) {
-                    const searchResults = [];
-                    for (let i = 1; i <= 10; i++) {
-                        searchResults.push(mainShopLink + '/shop' + i);
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                loading_tab4.style.display = 'flex';
+
+                fetch('/search-sub-shop', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loading_tab4.style.display = 'none';
+                    if (data.success) {
+                        message_tab4.style.color = 'green';
+                        message_tab4.innerHTML = '';
+                        data.shops.forEach(shop => {
+                            const shopContainer = document.createElement('div');
+                            shopContainer.classList.add('shop-container');
+                            
+                            const shopLink = document.createElement('span');
+                            shopLink.textContent = shop;
+                            shopLink.classList.add('shop-link');
+                            
+                            const copyButton = document.createElement('button');
+                            copyButton.textContent = 'Copy';
+                            copyButton.classList.add('copy-button');
+                            copyButton.addEventListener('click', () => {
+                                navigator.clipboard.writeText(shop)
+                                    .then(() => {
+                                        alert('Đã sao chép: ' + shop);
+                                    })
+                                    .catch(err => {
+                                        alert('Lỗi khi sao chép: ' + err);
+                                    });
+                            });
+                            
+                            shopContainer.appendChild(shopLink);
+                            shopContainer.appendChild(copyButton);
+                            message_tab4.appendChild(shopContainer);
+                        });
+                    } else {
+                        message_tab4.style.color = 'red';
+                        message_tab4.textContent = 'Tìm kiếm lỗi: ' + data.error;
                     }
-                    displayResults(searchResults);
-                    document.getElementById('loading').style.display = 'none';
-                } else {
-                    document.getElementById('loading').style.display = 'none';
-                }
+                })
+                .catch(error => {
+                    loading_tab4.style.display = 'none';
+                    message_tab4.style.color = 'red';
+                    message_tab4.textContent = 'Có lỗi xảy ra: ' + error.message;
+                });
             });
         });
-
-        function displayResults(results) {
-            const resultsContainer = document.getElementById('results');
-            resultsContainer.innerHTML = '';
-
-            results.forEach(result => {
-                const resultItem = document.createElement('div');
-                resultItem.className = 'result-item';
-
-                const resultText = document.createElement('span');
-                resultText.textContent = result;
-
-                const copyButton = document.createElement('button');
-                copyButton.className = 'copy-btn';
-                copyButton.textContent = 'Copy';
-                copyButton.addEventListener('click', () => {
-                    navigator.clipboard.writeText(result).then(() => {
-                        alert('Đã sao chép: ' + result);
-                    });
-                });
-
-                resultItem.appendChild(resultText);
-                resultItem.appendChild(copyButton);
-                resultsContainer.appendChild(resultItem);
-            });
-        }
     </script>
 </body>
 </html>

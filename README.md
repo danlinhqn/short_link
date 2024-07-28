@@ -4,8 +4,6 @@ docker run -d --name nginx --network my-network -p 80:80 nginx
 
 docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v06
 
-docker run -d --name trum-riviu-shop --network my-network linhtran2023/trum-riviu-shop:v02
-
 ```
 docker build -t linhtran2023/short-link-create-link:v01 .
 ```
@@ -100,3 +98,6 @@ docker run -d --name redis \
   redis:latest redis-server /usr/local/etc/redis/redis.conf
 
 ```
+
+-----
+# D14 : Lưu các shop phụ thử 1 shop chính ( Giới hạn 1 shop chính được 10 shop phụ )

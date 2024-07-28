@@ -125,6 +125,11 @@ def register_sub_shop():
     sub_shop_link = clean_url(request.form.get('sub_shop_link'))
     connect_link = request.form.get('connect_link')
     
+     # Tại đây kiểm tra số lượng cửa hàng con đã đạt giới hạn chưa = 10
+    if count_keys_in_hash(main_shop_link) > 10: 
+        error_message = "Số lượng cửa hàng con đã đạt giới hạn!"
+        return jsonify(success=False, error=error_message)
+    
     if sub_shop_link.replace("/","") == main_shop_link:
         error_message = "Link shop phụ không được giống với link shop chính."
         return jsonify(success=False, error=error_message)
@@ -152,28 +157,23 @@ def register_sub_shop():
         error_message = "Vui lòng nhập tất cả các trường"
         return jsonify(success=False, error=error_message)  
 
-#
-@app.route('/get-sub-shop', methods=['POST'])
+# Hàm tìm kiếm cửa hàng con -> Tab4
+@app.route('/search-sub-shop', methods=['POST'])
 def get_sub_shop():
-    
+    # Lấy dữ liệu từ form
+    search_main_shop_link = clean_url(request.form.get('search_main_shop_link'))
     try:
-        # Nhận dữ liệu từ yêu cầu POST
-        data = request.form
-        main_shop_link = data.get('main_shop_link', '').strip()
-        
-        if not main_shop_link:
-            return jsonify({'success': False, 'error': 'Link shop chính không được để trống'}), 400
-        
-        # Tìm các khóa trong Redis theo giá trị main_shop_link
-        # Giả sử bạn lưu trữ các khóa dưới dạng hash với các giá trị liên quan đến main_shop_link
-        hash_key = 'shop_hash'  # Thay thế bằng tên hash thực tế của bạn
-        keys = redis_client_14.hkeys(hash_key)
-        
-        # Lọc các khóa chứa main_shop_link
-        matching_keys = [key for key in keys if key.startswith(main_shop_link)]
-        
-        return jsonify({'success': True, 'keys': matching_keys}), 200
-    
+        # Tại đây kiểm tra hash này có tồn tại không 
+        if check_hash_exists(search_main_shop_link):
+           
+            # Tìm kiếm cửa hàng con
+            shops = get_keys_in_hash(search_main_shop_link)
+            if shops:  # Nếu có giá trị trong shops
+                return jsonify(success=True, shops=shops)
+            else:  # Nếu không có giá trị trong shops
+                return jsonify(success=False, error="Không có giá trị tim thấy")
+        else:
+            return jsonify(success=False, error="Không có giá trị tim thấy")
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 

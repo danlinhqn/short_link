@@ -180,3 +180,24 @@ def clean_url(url):
     # Sử dụng regex để loại bỏ các phần tử không mong muốn
     cleaned_url = re.sub(r'^https?://(www\.)?', '', url)
     return cleaned_url
+
+# Lấy tất cả các key trong một hash từ Redis và trả về dưới dạng một danh sách.
+def get_keys_in_hash(hash_name):
+    """Lấy tất cả các key trong một hash từ Redis và trả về dưới dạng một danh sách."""
+    return redis_client_14.hkeys(hash_name)
+
+# Hàm kiểm tra hash có tồn tại hay không
+def check_hash_exists(hash_name):
+    """Kiểm tra xem một hash có tồn tại trong Redis hay không."""
+    return redis_client_14.exists(hash_name)
+
+# Hàm kiểm tra số lượng key trong hash
+def count_keys_in_hash(hash_name):
+    """Đếm số lượng key trong hash Redis."""
+    try:
+        key_count = redis_client_14.hlen(hash_name)
+        return key_count
+    except Exception as e:
+        print(f"Lỗi khi đếm số lượng key trong hash: {e}")
+        return None
+    
