@@ -7,23 +7,25 @@
     <input type="text" id="title" name="title" required>
     <label for="description">Mô tả cơ bản:</label>
     <input type="text" id="description" name="description" required>
+    
     <label for="image">Chọn hình ảnh:</label>
-    <input type="file" id="image" name="image" required>
+    <div class="file-input-container">
+        <input type="file" id="image" name="image" required>
+    </div>
+
     <label for="link_url">Link sản phẩm tiếp thị liên kết:</label>
     <input type="text" id="link_url" name="link_url" required>
     <button type="submit">Bấm tạo link</button>
 </form>
+
 {% if short_link %}
 <style>
-
     h2 {
         color: #333;
-        /* margin: 20px; */
         margin: 0;
     }
 
-
-    .result-image{
+    .result-image {
         width: -webkit-fill-available;
         border-radius: 3px;
     }
@@ -34,6 +36,43 @@
         margin-bottom: 10px;
     }
 
+    .file-input-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .file-input-container input[type="file"] {
+        width: 100%;
+        height: 40px;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .file-input-container::before {
+        content: 'Chọn hình ảnh';
+        display: inline-block;
+        background: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        width: 100%;
+        height: 40px;
+        text-align: center;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .file-input-container input[type="file"]:hover::before {
+        background: #0056b3;
+    }
+
+    .file-input-container input[type="file"]:focus::before {
+        outline: 1px solid #0056b3;
+        outline: -webkit-focus-ring-color auto 1px;
+    }
 </style>
 
 <script>

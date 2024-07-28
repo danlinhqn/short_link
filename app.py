@@ -3,11 +3,12 @@ import json
 import os
 from werkzeug.utils import secure_filename
 from function  import *
+import time
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Chuyển hướng đến URL 
+# Chuyển hướng short đến URL 
 @app.route('/<item_id>')
 def redirect_to_url_shop_sell_product(item_id):
     """Chuyển hướng đến URL dựa trên mã rút gọn."""
@@ -52,6 +53,21 @@ def redirect_to_url_shop_sell_product(item_id):
 # Làm short link -> Tab1
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    # Tại đây sẽ kiểm tra lấy subdmain của domain trước khi chuyển hướng
+    host = request.host
+    # Tách subdomain ra nếu có
+    subdomain = host.split('.')[0] if '.' in host else None
+    
+    if subdomain:
+        # Kiểm tra subdomain có trong domain_approved không
+        full_domain = subdomain + "." + os.getenv("DOMAIN_CAN_REGISTER_SUBDOMAINS")
+        if check_key_in_hash_db_15("domain_approved", full_domain):
+            # print("Subdomain đã được phê duyệt -> Chuyển hướng đến trang shop")
+            link_connect = get_shop_link_from_hash_db_15("domain_approved", "shop1.riviu.online")
+            # Chuyển hướng render trang của shop liên kết
+            return render_web_view(link_connect)
+
+    # Nếu không có subdomain thì chuyển hướng đến trang chính
     """Hiển thị giao diện người dùng và xử lý yêu cầu."""
     short_link = ""
     error_message = None
@@ -82,7 +98,7 @@ def index():
 
     # Load dữ liệu để hiển thị
     data = load_data_from_redis_have_key('short_link', short_link.replace('/', ''))
-   
+
     return render_template('index.html', short_link=short_link, data=data, error_message=error_message)
 
 # Đăng ký tên miền -> Tab2
@@ -137,7 +153,7 @@ def register_sub_shop():
     if main_shop_link and sub_shop_link:
         try:
             # Kiểm tra xem domain đã tồn tại chưa
-            key_exists = check_key_in_hash("domain_approved", main_shop_link)
+            key_exists = check_key_in_hash_db_15("domain_approved", main_shop_link)
             if key_exists == False:
                 error_message = "Domain shop này chưa tồn tại!"
                 return jsonify(success=False, error=error_message)

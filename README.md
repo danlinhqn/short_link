@@ -1,24 +1,25 @@
+### Chương trình chính
+
+```
 docker network create my-network
 
-docker run -d --name nginx --network my-network -p 80:80 nginx
-
 docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v06
-
-```
-docker build -t linhtran2023/short-link-create-link:v01 .
 ```
 
+-----
+### Cài đặt Nginx 
+
+```
+docker run -d --name nginx --network my-network -p 80:80 nginx
 docker exec -it nginx sh
 nano /etc/nginx/conf.d/default.conf
-
-## Sửa lỗi khi nginx không đọc được file css
+```
 
 ```yaml
-# Domain realdealvn.click
+# Domain riviu.online ( Chấp nhận tất cả subdomain )
 server {
-    
     listen 80;
-    server_name realdealvn.click;
+    server_name .riviu.online;
     location /create-link {
         proxy_pass http://short-link-create-link:5000;
         proxy_set_header Host $host;
@@ -27,7 +28,8 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # Khai báo thư mục tĩnh ở đây
+    
+    # Sửa lỗi khi nginx không đọc được file css
     location /static/ {
         proxy_pass http://short-link-create-link:5000/static/;
         proxy_set_header Host $host;
@@ -36,23 +38,39 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # Khai báo thư mục tĩnh ở đây
+    # Sửa lỗi khi nginx không liên kết được folder upload
     location /uploads/ {
+        proxy_pass http://short-link-create-link:5000/uploads/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# Domain realdealvn.click ( Chấp nhận tất cả subdomain )
+server {
+    listen 80;
+    server_name .realdealvn.click;
+
+    location / {
+        proxy_pass http://short-link-create-link:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /static/ {
         proxy_pass http://short-link-create-link:5000/static/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
-}
 
-# Domain review-phim.realdealvn.click
-server {
-    listen 80;
-    server_name review-phim.realdealvn.click;
-
-    location / {
-        proxy_pass http://short-link-create-link:5000;
+    location /uploads/ {
+        proxy_pass http://short-link-create-link:5000/uploads/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -60,25 +78,12 @@ server {
     }
 }
 
-# Domain review-phim.realdealvn.click
-server {
-    listen 80;
-    server_name tin-hot.realdealvn.click;
-
-    location / {
-        proxy_pass http://short-link-create-link:5000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-    
-}
 ```
 
 -----
+### Cài đặt Redis
 
-sudo nano /root/redis_data/redis.conf
+```sudo nano /root/redis_data/redis.conf```
 
 ```
 bind 0.0.0.0
@@ -100,4 +105,7 @@ docker run -d --name redis \
 ```
 
 -----
-# D14 : Lưu các shop phụ thử 1 shop chính ( Giới hạn 1 shop chính được 10 shop phụ )
+## Các lưu ý về Redis database
+#### D14: Lưu các shop phụ thử 1 shop chính ( Giới hạn 1 shop chính được 10 shop phụ )
+
+#### D15: Lưu short_link và domain & dommain đã được xác thực

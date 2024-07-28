@@ -1,5 +1,7 @@
 import json
 import os
+from bs4 import BeautifulSoup
+import requests
 from werkzeug.utils import secure_filename
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
@@ -10,6 +12,7 @@ import string
 import hashlib
 import redis
 import re
+from flask import Flask, render_template_string
 
 # Tải biến môi trường từ tệp .env
 load_dotenv()
@@ -92,7 +95,7 @@ def save_data_to_redis_register_sub_shop(hash_name, key, value):
     return True  # Key successfully added
 
 # Hàm kiểm tra key trong hash
-def check_key_in_hash(hash_name, key):
+def check_key_in_hash_db_15(hash_name, key):
     """Kiểm tra giá trị của key trong một hash trong Redis."""
     return redis_client_15.hexists(hash_name, key)
 
@@ -200,4 +203,61 @@ def count_keys_in_hash(hash_name):
     except Exception as e:
         print(f"Lỗi khi đếm số lượng key trong hash: {e}")
         return None
+
+# Hàm lấy title của trang web
+def fetch_page_title(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        title_tag = soup.find('title')
+        if title_tag:
+            return title_tag.string
+    return "Default Title"
+
+# Render Web virew trang liên kết 
+def render_web_view(page_url):
+    page_title = fetch_page_title(page_url)
+    return render_template_string(f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="https://lh3.googleusercontent.com/u/0/drive-viewer/AKGpihYIJqYgQJwdryQeTkNOomUxzLIULT3HBUlsYfzhT_bqntUm6eZ62nxFYJa-ZA_Jwr57SaCypgbqkBz-ybMJ9UV4tb7jMG6l1A=w3440-h547" type="image/x-icon">
+        <title>{page_title}</title>
+        <style>
+            html, body {{
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }}
+            iframe {{
+                width: 100%;
+                height: 100%;
+                border: none;
+            }}
+        </style>
+    </head>
+    <body>
+        <iframe src="{page_url}"></iframe>
+    </body>
+    </html>
+    """)
     
+# Lấy giá trị của 'shop_link' từ một hash trong Redis.
+def get_shop_link_from_hash_db_15(hash_name, key):
+    """
+    Lấy giá trị của 'shop_link' từ một hash trong Redis.
+
+    :param hash_name: Tên của hash trong Redis.
+    :param key: Key trong hash.
+    :return: Giá trị của 'shop_link' nếu tồn tại, ngược lại trả về None.
+    """
+    value = redis_client_15.hget(hash_name, key)
+    
+    if value:
+        value_dict = json.loads(value)
+        return value_dict.get("shop_link")
+    
+    return None
