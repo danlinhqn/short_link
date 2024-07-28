@@ -13,6 +13,9 @@ import hashlib
 import redis
 import re
 from flask import Flask, render_template_string
+from flask import Flask, jsonify, request, render_template, redirect, render_template_string, url_for
+import json
+import os
 
 # Tải biến môi trường từ tệp .env
 load_dotenv()

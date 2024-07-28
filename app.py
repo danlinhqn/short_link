@@ -1,9 +1,5 @@
-from flask import Flask, jsonify, request, render_template, redirect, render_template_string, url_for
-import json
-import os
-from werkzeug.utils import secure_filename
+
 from function  import *
-import time
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
