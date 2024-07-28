@@ -8,7 +8,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Chuyển hướng short đến URL 
 @app.route('/<item_id>')
-# @cache.cached(timeout=600, query_string=True) # Cache 10 Phút
+@cache.cached(timeout=600, query_string=True) # Cache 10 Phút
 def redirect_to_url_shop_sell_product(item_id):
     # Tại đây sẽ kiểm item_id có thuộc giá trị ở sub shop hay không
     # Kiểm tra subdomain có trong domain_approved không
@@ -47,7 +47,7 @@ def redirect_to_url_shop_sell_product(item_id):
 
 # Làm short link -> Tab1
 @app.route('/', methods=['GET', 'POST'])
-@cache.cached(timeout=600, query_string=True) # Cache 10 Phút
+# @cache.cached(timeout=600, query_string=True) # Cache 10 Phút
 def index():
     # Tại đây sẽ kiểm tra lấy subdmain của domain trước khi chuyển hướng
     host = request.host
