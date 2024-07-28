@@ -59,7 +59,7 @@ def index():
         full_domain = subdomain + "." + os.getenv("DOMAIN_CAN_REGISTER_SUBDOMAINS")
         if check_key_in_hash_db_15("domain_approved", full_domain):
             # print("Subdomain đã được phê duyệt -> Chuyển hướng đến trang shop")
-            link_connect = get_shop_link_from_hash_db_15("domain_approved", "shop1.riviu.online")
+            link_connect = get_shop_link_from_hash_db_15("domain_approved", full_domain)
             # Chuyển hướng render trang của shop liên kết
             return render_web_view(link_connect)
 
