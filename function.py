@@ -207,7 +207,7 @@ def count_keys_in_hash(hash_name):
         print(f"Lỗi khi đếm số lượng key trong hash: {e}")
         return None
 
-# Hàm lấy title của trang web và thumbnail
+# Hàm lấy title, thumbnail và các thẻ meta khác của trang web
 def fetch_page_details(url):
     response = requests.get(url)
     if response.status_code == 200:
@@ -219,23 +219,32 @@ def fetch_page_details(url):
         og_image_tag = soup.find('meta', property='og:image')
         og_image = og_image_tag['content'] if og_image_tag else None
         
-        return title, og_image
-    return "Default Title", None
+        # Lấy tất cả các thẻ meta và link cần thiết
+        meta_tags = soup.find_all('meta')
+        link_tags = soup.find_all('link')
+        
+        meta_string = ""
+        for tag in meta_tags:
+            meta_string += str(tag) + "\n"
+        
+        link_string = ""
+        for tag in link_tags:
+            link_string += str(tag) + "\n"
+        
+        return title, og_image, meta_string, link_string
+    return "Default Title", None, "", ""
 
 # Render Web view trang liên kết 
 def render_web_view(page_url):
-    page_title, og_image = fetch_page_details(page_url)
-    og_image_tag = f'<meta property="og:image" content="{og_image}">' if og_image else ''
+    page_title, og_image, meta_string, link_string = fetch_page_details(page_url)
     
     return render_template_string(f"""
     <!DOCTYPE html>
     <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" href="https://lh3.googleusercontent.com/u/0/drive-viewer/AKGpihYIJqYgQJwdryQeTkNOomUxzLIULT3HBUlsYfzhT_bqntUm6eZ62nxFYJa-ZA_Jwr57SaCypgbqkBz-ybMJ9UV4tb7jMG6l1A=w3440-h547" type="image/x-icon">
+        {meta_string}
+        {link_string}
         <title>{page_title}</title>
-        {og_image_tag}
         <style>
             html, body {{
                 height: 100%;
