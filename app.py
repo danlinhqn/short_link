@@ -1,9 +1,6 @@
 
 from function  import *
 
-# Cấu hình upload hình ảnh
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Chuyển hướng short đến URL 
@@ -47,15 +44,13 @@ def redirect_to_url_shop_sell_product(item_id):
 
 # Làm short link -> Tab1
 @app.route('/', methods=['GET', 'POST'])
-# @cache.cached(timeout=600, query_string=True) # Cache 10 Phút
 def index():
     # Tại đây sẽ kiểm tra lấy subdmain của domain trước khi chuyển hướng
     host = request.host
     # Tách subdomain ra nếu có
     subdomain = host.split('.')[0] if '.' in host else None
     
-    # Tại đây kiểm tra nếu đường dẫn có sub domain và khác với sub domain chính thì thực hiện
-    if subdomain and subdomain != os.getenv("SUB_DOMAIN_MAIN"):
+    if subdomain and subdomain != "trum":
         # Kiểm tra subdomain có trong domain_approved không
         full_domain = subdomain + "." + os.getenv("DOMAIN_CAN_REGISTER_SUBDOMAINS")
         if check_key_in_hash_db_15("domain_approved", full_domain):
@@ -102,9 +97,9 @@ def index():
 @app.route('/register-domain', methods=['POST'])
 def register_domain():
     """Xử lý đăng ký tên miền."""
-    shop_link = remove_whitespace(request.form.get('shop_link'))
-    domain_name = remove_whitespace(request.form.get('domain_name'))
-    email = remove_whitespace(request.form.get('email'))
+    shop_link = (request.form.get('shop_link'))
+    domain_name = (request.form.get('domain_name'))
+    email = (request.form.get('email'))
     error_message = None
     
     if domain_name.replace(".riviu.online","") == "":
@@ -134,9 +129,9 @@ def register_domain():
 @app.route('/register-sub-shop', methods=['POST'])
 def register_sub_shop():
     """Xử lý đăng ký cửa hàng con."""
-    main_shop_link = remove_whitespace(clean_url(request.form.get('main_shop_link')))
-    sub_shop_link = remove_whitespace(clean_url(request.form.get('sub_shop_link')))
-    connect_link = remove_whitespace(request.form.get('connect_link'))
+    main_shop_link = (clean_url(request.form.get('main_shop_link')))
+    sub_shop_link = (clean_url(request.form.get('sub_shop_link')))
+    connect_link = (request.form.get('connect_link'))
 
      # Tại đây kiểm tra số lượng cửa hàng con đã đạt giới hạn chưa = 10
     if count_keys_in_hash(main_shop_link) > 10: 

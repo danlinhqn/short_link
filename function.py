@@ -19,10 +19,13 @@ import os
 import requests
 from flask_caching import Cache
 
+# Cấu hình cache + flask
 app = Flask(__name__)
-
-# Cấu hình cache
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+
+# Cấu hình upload hình ảnh
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 
 # Tải biến môi trường từ tệp .env
 load_dotenv()
@@ -359,4 +362,3 @@ def remove_whitespace(input_string):
     """
     # Xóa tất cả các khoảng trắng, bao gồm dấu cách, tab, newline, v.v.
     return ''.join(input_string.split())
-
