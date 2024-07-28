@@ -251,14 +251,6 @@ def fetch_page_details(url):
 
     return "Default Title", None, "", ""
 
-# Hàm tải nội dung trang web
-def fetch_page_content(page_url):
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(page_url, headers=headers)
-    if response.status_code == 200:
-        return response.text
-    return None
-
 # Hàm cập nhật các liên kết trong nội dung trang web
 def update_links(page_content, base_url):
     soup = BeautifulSoup(page_content, 'html.parser')
@@ -280,6 +272,16 @@ def update_links(page_content, base_url):
         img['src'] = requests.compat.urljoin(base_url, img['src'])
 
     return str(soup)
+
+
+# Hàm tải nội dung trang web
+def fetch_page_content(page_url):
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+    response = requests.get(page_url, headers=headers)
+    if response.status_code == 200:
+        return response.text
+    return None
+
 
 # Hàm render web view qua proxy
 def render_web_view_pass_proxy(page_url):
@@ -316,7 +318,7 @@ def render_web_view_pass_proxy(page_url):
     </head>
     <body>
         <div class="content">
-            {page_content}
+            {updated_content}
         </div>
     </body>
     </html>
