@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 from function import *
 
 def save_domain_approved_redis(hash_name, key):
@@ -17,4 +19,4 @@ def save_domain_approved_redis(hash_name, key):
         return False  # Key không tồn tại trong hash_name
     
 # Duyệt Sub domain
-save_domain_approved_redis("domains", "shop1.riviu.online")
+save_domain_approved_redis("domains", "trum.riviu.online")
