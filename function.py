@@ -362,3 +362,13 @@ def remove_whitespace(input_string):
     """
     # Xóa tất cả các khoảng trắng, bao gồm dấu cách, tab, newline, v.v.
     return ''.join(input_string.split())
+
+# Hàm kiểm tra các Domain được phép hiển thị dưới dạng webview
+def recheck_link_can_show_web_view(url):
+
+    # Domain được phép hiển thị webview
+    domain_can_show_web_view = ["linkbio.co"]
+
+    if clean_url(url) not in domain_can_show_web_view:
+        # Tại đây kiểm tra nếu link này không nằm trong danh sách domain_can_show_web_view thì trả về False
+        return False

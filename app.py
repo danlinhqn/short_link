@@ -26,7 +26,12 @@ def redirect_to_url_shop_sell_product(item_id):
                 # Khi có shop phụ rồi mới kiểm tra shop phụ này nằm ở key nào 
                 # Lây đường link để chuyển hướng luôn
                 link_connect = (get_connect_link_from_hash_db_14(full_domain, full_domain + "/" + item_id))
-                return render_web_view(link_connect)
+
+                if recheck_link_can_show_web_view(link_connect) == False:
+                    return redirect(link_connect) 
+                
+                # Ngược lại có thể hiển thị webview
+                else: return render_web_view(link_connect)
             
     # ---------------------------------------------------------------------- //
     """Chuyển hướng đến URL dựa trên mã rút gọn."""
