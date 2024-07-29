@@ -67,12 +67,20 @@ def index():
     # Nếu không có subdomain thì chuyển hướng đến trang chính
     """Hiển thị giao diện người dùng và xử lý yêu cầu."""
     short_link = ""
+    link_domain_shop = ""
     error_message = None
     if request.method == 'POST':
+        
+        link_domain_shop =  get_domain(request.form.get('link_domain_shop'))
         title = request.form.get('title')
         description = request.form.get('description')
         link_url = request.form.get('link_url')
         image = request.files.get('image')
+        
+        # Tại đây check xem link_domain_shop có trong domain_approved không, nếu không trả lỗi
+        if check_key_in_hash_db_15("domain_approved", link_domain_shop) == False:
+            error_message = "Domain shop này chưa được phê duyệt! Vui lòng đăng ký tại Menu [Đăng Ký Tên Miền]"
+            return render_template('index.html', short_link=short_link, data_link_domain_shop=link_domain_shop, error_message=error_message)
 
         if title and description and link_url and image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
@@ -86,17 +94,20 @@ def index():
                 # Xóa tệp sau khi upload thành công
                 os.remove(image_path)
 
-                short_link = make_short_link(title, description, image_url, link_url)
+                short_link = make_short_link(title, description, image_url, link_url, link_domain_shop)
 
             except Exception as e:
                 error_message = f"Đã xảy ra lỗi khi tải ảnh lên Google Drive: {e}"
         else:
             error_message = "Vui lòng nhập tất cả các trường và chọn hình ảnh hợp lệ"
 
+    if  link_domain_shop:
+        link_domain_shop =  link_domain_shop
+        
     # Load dữ liệu để hiển thị
     data = load_data_from_redis_have_key('short_link', short_link.replace('/', ''))
 
-    return render_template('index.html', short_link=short_link, data=data, error_message=error_message)
+    return render_template('index.html', short_link=short_link, data=data, data_link_domain_shop=link_domain_shop,  error_message=error_message)
 
 # Đăng ký tên miền -> Tab2
 @app.route('/register-domain', methods=['POST'])

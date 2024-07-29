@@ -1,5 +1,6 @@
 import json
 import os
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 import requests
 from werkzeug.utils import secure_filename
@@ -114,7 +115,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Hàm tạo liên kết rút gọn
-def make_short_link(title, description, image_url, link_url):
+def make_short_link(title, description, image_url, link_url, link_domain_shop):
     """Tạo liên kết rút gọn và lưu vào Redis."""
     # Tạo mã hash cho URL
     url_hash = hashlib.md5(link_url.encode()).hexdigest()[:3] + generate_random_string()
@@ -126,7 +127,7 @@ def make_short_link(title, description, image_url, link_url):
 
     # Nếu chưa tồn tại, lưu URL và các thuộc tính khác vào dữ liệu
     short_link_data = json.dumps({
-        'post_link': f"https://trum-riviu.realdealvn.click/{url_hash}",
+        'post_link': "https://" + link_domain_shop + "/" + url_hash,
         'title': title,
         'description': description,
         'image_url': image_url,
@@ -372,3 +373,8 @@ def recheck_link_can_show_web_view(url):
     if clean_url(url) not in domain_can_show_web_view:
         # Tại đây kiểm tra nếu link này không nằm trong danh sách domain_can_show_web_view thì trả về False
         return False
+
+# Hàm lấy domain từ URL
+def get_domain(url):
+    parsed_url = urlparse(url)
+    return parsed_url.netloc

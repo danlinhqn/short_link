@@ -3,18 +3,24 @@
 <div class="error-message">{{ error_message }}</div>
 {% endif %}
 <form method="post" enctype="multipart/form-data">
-    <label for="title">Tiêu đề:</label>
+
+    <label for="title">Tên miền shop của bạn:</label>
+    <input type="text" id="link_domain_shop" name="link_domain_shop" required>
+
+    <label for="title">Tiêu đề bài đăng:</label>
     <input type="text" id="title" name="title" required>
+
     <label for="description">Mô tả cơ bản:</label>
     <input type="text" id="description" name="description" required>
     
+    <label for="link_url">Link sản phẩm tiếp thị liên kết:</label>
+    <input type="text" id="link_url" name="link_url" required>
+
     <label for="image">Chọn hình ảnh:</label>
     <div class="file-input-container">
         <input type="file" id="image" name="image" required>
     </div>
 
-    <label for="link_url">Link sản phẩm tiếp thị liên kết:</label>
-    <input type="text" id="link_url" name="link_url" required>
     <button type="submit">Bấm tạo link</button>
 </form>
 
@@ -35,7 +41,7 @@
         margin: 0px;
         margin-bottom: 10px;
     }
-
+    
 </style>
 
 <script>
@@ -61,19 +67,10 @@
         <h3 class="result-link-label" id="h3_c">Link được tạo</h3>
         
         <div class="link-container">
-            <span id="link-input-1" class="result-link">https://trum.riviu.online{{ short_link }}</span>
+            <span id="link-input-1" class="result-link">https://{{ data_link_domain_shop }}{{ short_link }}</span>
             <button class="copy-button" onclick="copyToClipboard('link-input-1')">Sao chép</button>
         </div>
         
-        <div class="link-container">
-            <span id="link-input-2" class="result-link">https://review-phim.realdealvn.click{{ short_link }}</span>
-            <button class="copy-button" onclick="copyToClipboard('link-input-2')">Sao chép</button>
-        </div>
-        
-        <div class="link-container">
-            <span id="link-input-3" class="result-link">https://tin-hot.realdealvn.click{{ short_link }}</span>
-            <button class="copy-button" onclick="copyToClipboard('link-input-3')">Sao chép</button>
-        </div>
     </div>
     <div class="result-details">
         <h3 id="h3_c" class="result-title">{{ data[short_link[1:]].title }}</h3>
