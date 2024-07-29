@@ -10,6 +10,11 @@ body {
     overflow: auto;
 }
 
+input::placeholder {
+    color: #9b9b9b; /* Thay thế mã màu bằng mã màu bạn muốn */
+    opacity: 1; /* Đặt độ mờ của placeholder (1 là hoàn toàn rõ ràng) */
+  }
+
 .main-container {
     display: flex;
     flex-direction: row;
