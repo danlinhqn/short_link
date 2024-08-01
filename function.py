@@ -276,8 +276,14 @@ def fetch_page_details(url):
         
     return "Default Title", None, "", ""
 
+# Hàm để tạo khóa cache dựa trên page_url
+def make_cache_key(*args, **kwargs):
+    page_url = request.args.get('page_url')
+    return f"render_web_view:{page_url}"
+
 # Hàm render web view qua proxy
 #@cache.cached(timeout=3600, query_string=True) # Cache 10 Phút
+@cache.cached(timeout=3600, key_prefix=make_cache_key) # Cache 1 giờ, sử dụng khóa cache tùy chỉnh
 def render_web_view(page_url):
     
     try:
