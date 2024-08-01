@@ -295,7 +295,7 @@ def render_web_view(page_url):
     <!DOCTYPE html>
     <html lang="en">
     <head>
-        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">                  
+        <link rel="icon" href="/static/favicon.ico" type="image/x-icon">                  
         {meta_string}
         {link_string}
         <title>{page_title}</title>
