@@ -279,7 +279,8 @@ def fetch_page_details(url):
 
 # Hàm để tạo khóa cache dựa trên page_url
 def make_cache_key(*args, **kwargs):
-    return f"render_web_view:{kwargs.get('page_url')}"
+    page_url = kwargs.get('page_url')
+    return f"render_web_view:{page_url}"
 
 #@cache.cached(timeout=3600, query_string=True) # Cache 10 Phút
 @cache.cached(timeout=3600, key_prefix=make_cache_key )  # Cache 1 giờ, sử dụng khóa cache tùy chỉnh
