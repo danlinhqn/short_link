@@ -277,7 +277,7 @@ def fetch_page_details(url):
     return "Default Title", None, "", ""
 
 # Hàm render web view qua proxy
-@cache.cached(timeout=600, query_string=True) # Cache 10 Phút
+@cache.cached(timeout=3600, query_string=True) # Cache 10 Phút
 def render_web_view(page_url):
     
     try:
@@ -295,6 +295,7 @@ def render_web_view(page_url):
     <!DOCTYPE html>
     <html lang="en">
     <head>
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">                  
         {meta_string}
         {link_string}
         <title>{page_title}</title>
