@@ -277,7 +277,7 @@ def fetch_page_details(url):
     return "Default Title", None, "", ""
 
 # Hàm render web view qua proxy
-@cache.cached(timeout=3600, query_string=True) # Cache 10 Phút
+#@cache.cached(timeout=3600, query_string=True) # Cache 10 Phút
 def render_web_view(page_url):
     
     try:
