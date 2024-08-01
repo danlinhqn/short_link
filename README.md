@@ -5,10 +5,10 @@ docker network create my-network
 
 # Rebuild
 docker rm -f short-link-create-link
-docker build -t linhtran2023/short-link-create-link:v22 .
+docker build -t linhtran2023/short-link-create-link:v23 .
 
 # Khi chạy ở lớp mạng Localhost mặc định
-docker run -p 5000:5000 -d --name short-link-create-link  linhtran2023/short-link-create-link:v22
+docker run -p 5000:5000 -d --name short-link-create-link  linhtran2023/short-link-create-link:v23
 
 # Khi chạy với 1 lớp mạng khác
 docker run -d --name short-link-create-link --network my-network linhtran2023/short-link-create-link:v20

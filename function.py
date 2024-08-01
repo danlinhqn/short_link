@@ -281,7 +281,7 @@ def fetch_page_details(url):
 def make_cache_key(page_url):
     return f"render_web_view:{page_url}"
 #@cache.cached(timeout=3600, query_string=True) # Cache 10 Phút
-@cache.cached(timeout=3600, key_prefix=make_cache_key)  # Cache 1 giờ, sử dụng khóa cache tùy chỉnh
+@cache.cached(timeout=3600, key_prefix=make_cache_key query_string=True)  # Cache 1 giờ, sử dụng khóa cache tùy chỉnh
 def render_web_view(page_url):
     
     try:
